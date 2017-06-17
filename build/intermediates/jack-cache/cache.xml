@@ -26,6 +26,12 @@
         <dex dex="/home/lion/RockWheel/app/build/intermediates/transforms/preJackRuntimeLibraries/debug/jars/8000/40/org.apache.http.legacy-473735248c79b527c58b90aa83d7a2dd03b8373e.jar" />
     </item>
     <item
+        jar="/home/lion/.android/build-cache/f99a6e06507cb22796c5a18385d7a06ecb3619ff/output/jars/classes.jar"
+        revision="25.0.2"
+        sha1="987adec819c9a98faf215814f41195da48fc724e">
+        <dex dex="/home/lion/RockWheel/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-11240ec1d3cf3e4684f2a4cdd0d17b75c7470d13.jar" />
+    </item>
+    <item
         jar="/home/lion/.android/build-cache/da8e3c74818f243918a706f05b2f7b4e85c87211/output/jars/classes.jar"
         revision="25.0.2"
         sha1="da27a32db6af8954ee8061537c7d476fcb1df46f">

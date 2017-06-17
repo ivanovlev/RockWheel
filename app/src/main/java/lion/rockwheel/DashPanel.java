@@ -3,7 +3,6 @@ package lion.rockwheel;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -15,13 +14,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import lion.rockwheel.MessageConstants;
-import lion.rockwheel.R;
-import lion.rockwheel.SettingsPanel;
 import lion.rockwheel.bluetooth.BtDeviceInfo;
 import lion.rockwheel.bluetooth.BtService;
 import lion.rockwheel.helpers.CfgHelper;
@@ -53,7 +54,7 @@ public class DashPanel extends AppCompatActivity {
                 }
             }
             catch (Exception e){
-                ShowMessage(e.getMessage());
+                showMessage(e.getMessage());
             }
 
         });
@@ -75,42 +76,58 @@ public class DashPanel extends AppCompatActivity {
     }
 
     private Handler getHandler() {
+        TextView tbInfo = (TextView) findViewById(R.id.tbInfo);
+
+        ProgressBar barSpeed= (ProgressBar) findViewById(R.id.barSpeed);
+        TextView tbSpeed = (TextView) findViewById(R.id.tbSpeed);
+        FrameLayout.LayoutParams tbSpeedPos = (FrameLayout.LayoutParams) findViewById(R.id.tbSpeedPos).getLayoutParams();
+
+        ProgressBar barVoltage = (ProgressBar) findViewById(R.id.barVoltage);
+        TextView tbVoltage = (TextView) findViewById(R.id.tbVoltage);
+        FrameLayout.LayoutParams tbVoltagePos = (FrameLayout.LayoutParams) findViewById(R.id.tbVoltagePos).getLayoutParams();
+
+        DecimalFormat format = new DecimalFormat("#0.0");
+        DecimalFormat intFormat = new DecimalFormat("##");
+
+        GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
+        Viewport viewport = gvTrip.getViewport();
+        LineGraphSeries<DataPoint> series = new LineGraphSeries();
+        gvTrip.addSeries(series);
+        viewport.setXAxisBoundsManual(true);
+
         return new Handler() {
-            TextView tbInfo = (TextView) findViewById(R.id.tbInfo);
-
-            ProgressBar barSpeed= (ProgressBar) findViewById(R.id.barSpeed);
-            TextView tbSpeed = (TextView) findViewById(R.id.tbSpeed);
-            FrameLayout.LayoutParams tbSpeedPos = (FrameLayout.LayoutParams) findViewById(R.id.tbSpeedPos).getLayoutParams();
-
-            ProgressBar barVoltage = (ProgressBar) findViewById(R.id.barVoltage);
-            TextView tbVoltage = (TextView) findViewById(R.id.tbVoltage);
-            FrameLayout.LayoutParams tbVoltagePos = (FrameLayout.LayoutParams) findViewById(R.id.tbVoltagePos).getLayoutParams();
-
-            DecimalFormat format = new DecimalFormat("#0.0");
-            DecimalFormat intFormat = new DecimalFormat("##");
-
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case MessageConstants.MESSAGE_READ:
                         BtDeviceInfo info = (BtDeviceInfo)msg.obj;
 
                         tbInfo.setText(String.format("%1$s km\\h | %2$s km\\h | %3$s v | %4$s km",
-                                                        info.getSpeed(),
-                                                        info.getMaxSpeed(),
-                                                        info.getVoltage(),
-                                                        format.format(info.getDistance())));
+                                                        info.speed,
+                                                        info.maxSpeed,
+                                                        info.voltage,
+                                                        format.format(info.distance)));
 
                         float s = info.getSpeedPecent(30);
                         barSpeed.setProgress((int)s);
-                        tbSpeed.setText(intFormat.format(info.getSpeed()));
+                        tbSpeed.setText(intFormat.format(info.speed));
                         tbSpeedPos.bottomMargin = (int)convertToPt(s);
 
                         float v = (info.getCellVoltage(batterySeries) - cellLow)/(cellHigh - cellLow) * 100;
                         barVoltage.setProgress((int)v);
-                        tbVoltage.setText(intFormat.format(info.getVoltage()));
+                        tbVoltage.setText(intFormat.format(info.voltage));
                         tbVoltagePos.bottomMargin = (int)convertToPt(v);
 
                         setTitle(String.format("RockWheel %1$ss (Connected)", batterySeries));
+
+                        try {
+                            series.resetData(DbHelper.getHistory(0.001f));
+                            viewport.setMaxX(series.getHighestValueX());
+                            viewport.setMinX(series.getLowestValueX());
+
+                        }catch (Exception e) {
+                            showMessage(e.getMessage());
+                        }
+
                         break;
 
                     case MessageConstants.MESSAGE_ERROR:
@@ -126,7 +143,7 @@ public class DashPanel extends AppCompatActivity {
 
                         setTitle(String.format("RockWheel %1$ss", batterySeries));
 
-                        ShowMessage(msg.obj.toString());
+                        showMessage(msg.obj.toString());
                         break;
 
                     case MessageConstants.REQUEST_ENABLE_BT:
@@ -176,7 +193,7 @@ public class DashPanel extends AppCompatActivity {
         }
     }
 
-    private void ShowMessage(CharSequence text){
+    private void showMessage(CharSequence text){
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 }

@@ -8,15 +8,15 @@ import java.util.Date;
  * Класс информации о девайсе в момент времени
  * */
 public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
-    private float speed = 0;
+    public float speed = 0;
 
-    private float maxSpeed = 0;
+    public float maxSpeed = 0;
 
-    private float voltage = 0;
+    public float voltage = 0;
 
-    private float distance = 0;
+    public float distance = 0;
 
-    private Date date = new Date();
+    public Date date = new Date();
 
     public BtDeviceInfo(){
 
@@ -33,11 +33,11 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
 
     public BtDeviceInfo update(BtDeviceInfo last){
         if (last != null){
-            if (last.getMaxSpeed() > maxSpeed){
-                maxSpeed = last.getMaxSpeed();
+            if (last.maxSpeed > maxSpeed){
+                maxSpeed = last.maxSpeed;
             }
 
-            distance += last.getDistance();
+            distance += last.distance;
         }
 
         return this;
@@ -60,24 +60,7 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
         return speed / limit * 100;
     }
 
-    public float getSpeed(){
-        return speed;
-    }
-
-    public float getMaxSpeed(){
-        return maxSpeed;
-    }
-
-    public float getVoltage(){
-        return voltage;
-    }
-
     public float getCellVoltage(int s){
         return voltage / s;
     }
-
-    public float getDistance(){ return distance; }
-
-    public Date getDate() {return date; }
-
 }

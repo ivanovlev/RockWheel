@@ -8,9 +8,7 @@
     tools:context="lion.rockwheel.DashPanel"
     tools:showIn="@layout/activity_dash_panel">
 
-    <LinearLayout
-        android:orientation="vertical"
-
+    <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -18,154 +16,202 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Speed | MaxSpeed | Battery | Distance">
-        </TextView>
 
-        <TextView
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:id="@+id/tbInfo"
-            android:text="- | - | - | -">
-        </TextView>
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+                <FrameLayout
+                    android:layout_width="55pt"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:textStyle="bold"
+                        android:textSize="8pt"
+                        android:text="Km/h"/>
+
+                    <LinearLayout
+                        android:layout_width="15pt"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_gravity="right">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:text="30"/>
+
+                        <ProgressBar
+                            android:id="@+id/barSpeed"
+                            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+                            android:progressDrawable="@drawable/levelbar"
+                            android:max="100"
+                            android:progress="0"
+                            android:layout_width="10pt"
+                            android:layout_height="100pt"
+                            android:layout_gravity="center"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:text="0"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/tbSpeedPos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|bottom">
+
+                        <TextView
+                            android:id="@+id/tbSpeed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:text="00"
+                            android:textStyle="bold"
+                            android:textSize="15pt"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text=" }-------"
+                            android:textSize="8pt"/>
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <View
+                    android:layout_width="10pt"
+                    android:layout_height="10pt"/>
+
+                <FrameLayout
+                    android:layout_width="55pt"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:textStyle="bold"
+                        android:textSize="8pt"
+                        android:text="Volts"/>
+
+                    <LinearLayout
+                        android:layout_width="15pt"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_gravity="left">
+
+                        <TextView
+                            android:id="@+id/barVoltageHigh"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:text="-"/>
+
+                        <ProgressBar
+                            android:id="@+id/barVoltage"
+                            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+                            android:progressDrawable="@drawable/levelbar"
+                            android:max="100"
+                            android:progress="0"
+                            android:layout_width="10pt"
+                            android:layout_height="100pt"
+                            android:layout_gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/barVoltageLow"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:text="-"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/tbVoltagePos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|bottom">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="-------{ "
+                            android:textSize="8pt"/>
+                        <TextView
+                            android:id="@+id/tbVoltage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="left"
+                            android:textStyle="bold"
+                            android:text="00"
+                            android:textSize="15pt"/>
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trip statistics:"/>
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/gvTrip"
+                android:layout_width="match_parent"
+                android:layout_height="80pt"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center">
+            android:orientation="vertical"
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true" >
 
-            <FrameLayout
-                android:layout_width="50pt"
-                android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Speed | MaxSpeed | Battery | Distance">
+            </TextView>
 
-                <LinearLayout
-                    android:layout_width="15pt"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="right">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:text="30"/>
-
-                    <ProgressBar
-                        android:id="@+id/barSpeed"
-                        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-                        android:progressDrawable="@drawable/levelbar"
-                        android:max="100"
-                        android:progress="0"
-                        android:layout_width="10pt"
-                        android:layout_height="100pt"
-                        android:layout_gravity="center"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:text="0"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tbSpeedPos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|bottom">
-
-                    <TextView
-                        android:id="@+id/tbSpeed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="00"
-                        android:textStyle="bold"
-                        android:textSize="15pt"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text=" }-------"
-                        android:textSize="8pt"/>
-
-                </LinearLayout>
-
-            </FrameLayout>
-
-            <View
-                android:layout_width="10pt"
-                android:layout_height="10pt"/>
-
-            <FrameLayout
-                android:layout_width="50pt"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="15pt"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="left">
-
-                    <TextView
-                        android:id="@+id/barVoltageHigh"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:text="-"/>
-
-                    <ProgressBar
-                        android:id="@+id/barVoltage"
-                        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-                        android:progressDrawable="@drawable/levelbar"
-                        android:max="100"
-                        android:progress="0"
-                        android:layout_width="10pt"
-                        android:layout_height="100pt"
-                        android:layout_gravity="center"/>
-
-                    <TextView
-                        android:id="@+id/barVoltageLow"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:text="-"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tbVoltagePos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left|bottom">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="-------{ "
-                        android:textSize="8pt"/>
-                    <TextView
-                        android:id="@+id/tbVoltage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:textStyle="bold"
-                        android:text="00"
-                        android:textSize="15pt"/>
-
-                </LinearLayout>
-
-            </FrameLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:id="@+id/tbInfo"
+                android:text="- | - | - | -">
+            </TextView>
 
         </LinearLayout>
 
 
-    </LinearLayout>
+
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
