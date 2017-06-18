@@ -6,9 +6,11 @@ import com.orm.query.Select;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import lion.rockwheel.bluetooth.BtDevice;
 import lion.rockwheel.bluetooth.BtDeviceInfo;
 
 /**
@@ -26,47 +28,25 @@ public class DbHelper {
                 .list();
     }
 
-    public static DataPoint[] getHistory(float round){
+    public static DataPoint[] getHistory(BtDeviceInfo current, float meters){
         List<BtDeviceInfo> history = Select.from(BtDeviceInfo.class)
+                .where(Condition.prop("distance").gt(current.distance - meters))
                 .orderBy("date")
-                //.limit("120")
                 .list();
 
-        if (history.size() > 120){
-            history = history.subList(history.size() - 120, history.size() - 1);
-        }
-
-        List<DataPoint> points = new ArrayList();
-        int records = 0;
-        float speedSum = 0;
-        float distance = 0;
+        DataPoint[] points = new DataPoint[history.size()];
         for (BtDeviceInfo info: history) {
-            speedSum += info.speed;
-            records++;
-
-            if (info.distance - distance > round) {
-                points.add(new DataPoint(info.distance, speedSum / records));
-
-                distance = info.distance;
-                records = 0;
-                speedSum = 0;
-            }
+            points[history.indexOf(info)] = new DataPoint(info.distance, info.speed);
         }
 
-        if (records > 0){
-            points.add(new DataPoint(distance + round, speedSum / records));
-        }
-
-        return points.toArray(new DataPoint[points.size()]);
+        return points;
     }
 
     public static BtDeviceInfo getLastInfo(){
-        List<BtDeviceInfo> history = Select.from(BtDeviceInfo.class)
-                .orderBy("date")
-                .list();
+        List<BtDeviceInfo> history = BtDeviceInfo.find(BtDeviceInfo.class, null, null, null, "date DESC", "1");
 
         if (history.size() > 0){
-            return history.get(history.size() - 1);
+            return history.get(0);
         }
 
         return null;

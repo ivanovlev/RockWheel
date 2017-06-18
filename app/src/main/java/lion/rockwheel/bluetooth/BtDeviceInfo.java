@@ -16,6 +16,8 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
 
     public float distance = 0;
 
+    public float session = 0;
+
     public Date date = new Date();
 
     public BtDeviceInfo(){
@@ -29,10 +31,11 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
         maxSpeed = Float.parseFloat(split[1])/10;
         voltage = Float.parseFloat(split[2])/10;
         distance = Float.parseFloat(split[3])/10000;
+        session = Float.parseFloat(split[4])/10;
     }
 
     public BtDeviceInfo update(BtDeviceInfo last){
-        if (last != null){
+        if (last != null && last.session != session){
             if (last.maxSpeed > maxSpeed){
                 maxSpeed = last.maxSpeed;
             }

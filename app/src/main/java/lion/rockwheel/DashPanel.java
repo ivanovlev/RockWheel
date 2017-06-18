@@ -18,6 +18,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -73,6 +74,17 @@ public class DashPanel extends AppCompatActivity {
         barVoltageLow.setText(format.format(batterySeries * cellLow));
 
         setTitle(String.format("RockWheel %1$ss", batterySeries));
+
+        GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
+        gvTrip.removeAllSeries();
+        gvTrip.addSeries(new LineGraphSeries());
+        Viewport viewport = gvTrip.getViewport();
+        viewport.setXAxisBoundsManual(true);
+        viewport.setYAxisBoundsManual(true);
+        viewport.setMaxY(40);
+        viewport.setMinY(0);
+
+        updateChart(DbHelper.getLastInfo());
     }
 
     private Handler getHandler() {
@@ -89,12 +101,6 @@ public class DashPanel extends AppCompatActivity {
         DecimalFormat format = new DecimalFormat("#0.0");
         DecimalFormat intFormat = new DecimalFormat("##");
 
-        GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
-        Viewport viewport = gvTrip.getViewport();
-        LineGraphSeries<DataPoint> series = new LineGraphSeries();
-        gvTrip.addSeries(series);
-        viewport.setXAxisBoundsManual(true);
-
         return new Handler() {
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
@@ -106,6 +112,7 @@ public class DashPanel extends AppCompatActivity {
                                                         info.maxSpeed,
                                                         info.voltage,
                                                         format.format(info.distance)));
+                        updateChart(info);
 
                         float s = info.getSpeedPecent(30);
                         barSpeed.setProgress((int)s);
@@ -118,15 +125,6 @@ public class DashPanel extends AppCompatActivity {
                         tbVoltagePos.bottomMargin = (int)convertToPt(v);
 
                         setTitle(String.format("RockWheel %1$ss (Connected)", batterySeries));
-
-                        try {
-                            series.resetData(DbHelper.getHistory(0.001f));
-                            viewport.setMaxX(series.getHighestValueX());
-                            viewport.setMinX(series.getLowestValueX());
-
-                        }catch (Exception e) {
-                            showMessage(e.getMessage());
-                        }
 
                         break;
 
@@ -152,6 +150,19 @@ public class DashPanel extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    private void updateChart(BtDeviceInfo current){
+        try {
+            GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
+            for (Series series : gvTrip.getSeries()) {
+                ((LineGraphSeries)series).resetData(DbHelper.getHistory(current, 0.2f));
+                gvTrip.getViewport().setMaxX(series.getHighestValueX());
+                gvTrip.getViewport().setMinX(series.getLowestValueX());;
+            }
+        }catch (Exception e){
+            showMessage(e.getMessage());
+        }
     }
 
     private float convertToPt(float sp){
