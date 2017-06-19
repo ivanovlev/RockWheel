@@ -18,55 +18,45 @@ import lion.rockwheel.bluetooth.BtDeviceInfo;
  */
 
 public class DbHelper {
-    public static List<BtDeviceInfo> getHistory(Date date){
-        long startDate = clearDate(date).getTime();
-        long endDate = getNextDay(startDate);
+    private static List<BtDeviceInfo> allHistory = Select.from(BtDeviceInfo.class)
+            .orderBy("date")
+            .list();
 
-       return Select.from(BtDeviceInfo.class)
-                .where(Condition.prop("date").gt(startDate)).and(Condition.prop("date").lt(endDate))
-                .orderBy("date")
-                .list();
-    }
+    private static List<BtDeviceInfo> shortHistory = Select.from(BtDeviceInfo.class)
+            .orderBy("date")
+            .list();
 
-    public static DataPoint[] getHistory(BtDeviceInfo current, float meters){
-        List<BtDeviceInfo> history = Select.from(BtDeviceInfo.class)
-                .where(Condition.prop("distance").gt(current.distance - meters))
-                .orderBy("date")
-                .list();
-
-        DataPoint[] points = new DataPoint[history.size()];
-        for (BtDeviceInfo info: history) {
-            points[history.indexOf(info)] = new DataPoint(info.distance, info.speed);
+    public static BtDeviceInfo save(BtDeviceInfo info){
+        if (info.speed > 0){
+            info.save();
+            allHistory.add(info);
         }
 
-        return points;
+        return info;
+    }
+
+    public static DataPoint[] getHistory(BtDeviceInfo max, float meters){
+        if (allHistory.size() > 1){
+            BtDeviceInfo min = Collections.min(allHistory, (current, last) -> max.distance - current.distance >= meters ? 1 : -1);
+            List<BtDeviceInfo> history = allHistory.subList(allHistory.indexOf(min), allHistory.size());
+
+            DataPoint[] points = new DataPoint[history.size()];
+            for (BtDeviceInfo info: history) {
+                points[history.indexOf(info)] = new DataPoint(info.distance, info.speed);
+            }
+
+            return points;
+        }
+
+        return new DataPoint[0];
     }
 
     public static BtDeviceInfo getLastInfo(){
-        List<BtDeviceInfo> history = BtDeviceInfo.find(BtDeviceInfo.class, null, null, null, "date DESC", "1");
-
-        if (history.size() > 0){
-            return history.get(0);
-        }
-
-        return null;
+        return Collections.max(allHistory, (current, last) -> current.date.getTime() > last.date.getTime() ? 1 : -1);
     }
 
     public static void clearHistory(){
         BtDeviceInfo.deleteAll(BtDeviceInfo.class);
-    }
-
-    private static Date clearDate(Date date){
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
-
-    private static Long getNextDay(long date){
-        return date + 1 * 24 * 60 * 60 * 1000;
+        allHistory.clear();
     }
 }

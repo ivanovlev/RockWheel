@@ -83,8 +83,9 @@ public class BtConnection extends Thread {
                         result = rawInfo.substring(start + 1, end);
                         rawInfo = rawInfo.substring(end + 1);
 
+                        BtDeviceInfo info = new BtDeviceInfo(result).update(lastInfo);
                         // отправляем результат в GUI
-                        handler.obtainMessage(MessageConstants.MESSAGE_READ, new BtDeviceInfo(result).update(lastInfo).toDb()).sendToTarget();
+                        handler.obtainMessage(MessageConstants.MESSAGE_READ, DbHelper.save(info)).sendToTarget();
                     }
                 }
 

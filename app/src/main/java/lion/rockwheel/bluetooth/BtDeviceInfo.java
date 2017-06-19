@@ -46,15 +46,6 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
         return this;
     }
 
-    public BtDeviceInfo toDb()
-    {
-        if (speed > 0){
-            save();
-        }
-
-        return this;
-    }
-
     public float getSpeedPecent(int limit){
         if (speed > limit){
             return 100;

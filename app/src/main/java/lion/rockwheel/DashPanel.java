@@ -22,6 +22,8 @@ import com.jjoe64.graphview.series.Series;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import lion.rockwheel.bluetooth.BtDeviceInfo;
@@ -154,12 +156,17 @@ public class DashPanel extends AppCompatActivity {
 
     private void updateChart(BtDeviceInfo current){
         try {
+            Date start = new Date();
+
             GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
             for (Series series : gvTrip.getSeries()) {
                 ((LineGraphSeries)series).resetData(DbHelper.getHistory(current, 0.2f));
                 gvTrip.getViewport().setMaxX(series.getHighestValueX());
-                gvTrip.getViewport().setMinX(series.getLowestValueX());;
+                gvTrip.getViewport().setMinX(series.getLowestValueX());
             }
+            Date finish = new Date();
+
+            showMessage(String.valueOf(finish.getTime()-start.getTime()));
         }catch (Exception e){
             showMessage(e.getMessage());
         }
