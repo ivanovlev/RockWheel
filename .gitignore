@@ -31,3 +31,9 @@ proguard/
 MPChartLib
 
 fw.dirs
+
+*.rawproto
+
+*.bin
+
+*.lock

@@ -22,10 +22,6 @@ public class DbHelper {
             .orderBy("date")
             .list();
 
-    private static List<BtDeviceInfo> shortHistory = Select.from(BtDeviceInfo.class)
-            .orderBy("date")
-            .list();
-
     public static BtDeviceInfo save(BtDeviceInfo info){
         if (info.speed > 0){
             info.save();
