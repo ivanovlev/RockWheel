@@ -5,54 +5,99 @@ import com.orm.query.Condition;
 import com.orm.query.Select;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import lion.rockwheel.bluetooth.BtDevice;
 import lion.rockwheel.bluetooth.BtDeviceInfo;
 
 /**
- * Created by lion on 6/15/17.
+ * Помощник работы с БД
  */
-
 public class DbHelper {
-    private static List<BtDeviceInfo> allHistory = Select.from(BtDeviceInfo.class)
-            .orderBy("date")
-            .list();
+    /**
+     * Ограничение обрабатываемого пробега. Ускоряет производительность в разы
+     */
+    private static float meters = 0.2f;
 
+    /**
+     * Кеш из бд на последние @see DbHelper#meters
+     */
+    private static List<BtDeviceInfo> cache = init();
+
+    /**
+     * Актуальные данные
+     */
+    private static BtDeviceInfo lastInfo = getLastInfo();
+
+    /**
+     * Инициализация кеша
+     * @return отсортированный массив с данными по возрастанию даты
+     */
+    private static List<BtDeviceInfo> init() {
+        BtDeviceInfo max = Select.from(BtDeviceInfo.class)
+                .orderBy("date DESC")
+                .first();
+
+        if (max != null) {
+            return Select.from(BtDeviceInfo.class)
+                    .where(Condition.prop("distance").gt(max.distance - meters))
+                    .orderBy("date")
+                    .list();
+        }
+
+        return new ArrayList();
+    }
+
+    /**
+     * Сохранить информацию в БД
+     * @param info информация о девайсе
+     * @return информация о девайсе
+     */
     public static BtDeviceInfo save(BtDeviceInfo info){
-        if (info.speed > 0){
+        if (!info.equals(lastInfo)){
             info.save();
-            allHistory.add(info);
-        }
+            cache.add(info);
+            lastInfo = info;
 
-        return info;
-    }
-
-    public static DataPoint[] getHistory(BtDeviceInfo max, float meters){
-        if (allHistory.size() > 1){
-            BtDeviceInfo min = Collections.min(allHistory, (current, last) -> max.distance - current.distance >= meters ? 1 : -1);
-            List<BtDeviceInfo> history = allHistory.subList(allHistory.indexOf(min), allHistory.size());
-
-            DataPoint[] points = new DataPoint[history.size()];
-            for (BtDeviceInfo info: history) {
-                points[history.indexOf(info)] = new DataPoint(info.distance, info.speed);
+            while (info.distance - cache.get(0).distance > meters){
+                cache.remove(0);
             }
-
-            return points;
         }
 
-        return new DataPoint[0];
+        return lastInfo;
     }
 
+    /**
+     * Возвращает историю девайса за последние @see DbHelper#meters
+     * @return история девайса
+     */
+    public static DataPoint[] getHistory(){
+        DataPoint[] points = new DataPoint[cache.size()];
+        for (BtDeviceInfo info: cache) {
+            points[cache.indexOf(info)] = new DataPoint(info.distance, info.speed);
+        }
+
+        return points;
+    }
+
+    /**
+     * Обновляет актуальную информацию о девайсе
+     * @return текущая информация о девайсе
+     */
     public static BtDeviceInfo getLastInfo(){
-        return Collections.max(allHistory, (current, last) -> current.date.getTime() > last.date.getTime() ? 1 : -1);
+        if (cache.size() > 0){
+            return Collections.max(cache, (current, last) -> current.date.compareTo(last.date));
+        }
+
+        return null;
     }
 
+    /**
+     * Очищает историю в бд и кеше
+     */
     public static void clearHistory(){
         BtDeviceInfo.deleteAll(BtDeviceInfo.class);
-        allHistory.clear();
+        cache.clear();
     }
 }

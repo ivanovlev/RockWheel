@@ -11,16 +11,34 @@ import lion.rockwheel.helpers.DbHelper;
 import lion.rockwheel.MessageConstants;
 
 /**
- * Created by lion on 6/5/17.
+ * Работа с bluetooth устройством
  */
-
 public class BtConnection extends Thread {
+    /**
+     * Id COM порта телефона
+     */
     public final static UUID SppId = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
+    /**
+     * bluetooth устройство
+     */
     BluetoothDevice device;
+
+    /**
+     * Флаг прослушки COM порта
+     */
     Boolean listen;
+
+    /**
+     * Обработчик событий
+     */
     Handler handler;
 
+    /**
+     * Конструктор с передачей bluetooth устройства и обработчика событий
+     * @param device bluetooth устройство
+     * @param handler обработчик событий
+     */
     public BtConnection(BluetoothDevice device, Handler handler) {
         this.handler = handler;
         this.device = device;
@@ -28,6 +46,12 @@ public class BtConnection extends Thread {
         start();
     }
 
+    /**
+     * Подключение у bluetooth устройству
+     * @param retry количество попыток
+     * @return открытый bluetooth сокет
+     * @throws Exception
+     */
     private BluetoothSocket connect(Integer retry) throws Exception {
         BluetoothSocket socket;
         Integer count = 0;
@@ -54,6 +78,9 @@ public class BtConnection extends Thread {
         return null;
     }
 
+    /**
+     * Прослушка COM порта к bluetooth устройству
+     */
     public void run() {
         byte[] mmBuffer = new byte[64];
         int numBytes = 0; // bytes returned from read()
@@ -99,10 +126,19 @@ public class BtConnection extends Thread {
 
     }
 
+    /**
+     * Остановка прослушки COM порта
+     */
     public void cancel() {
         listen = false;
     }
 
+    /**
+     * Преобразование буфера из байтов в текст
+     * @param _bytes буфер
+     * @param size реальная длинна содержимого буфера
+     * @return текст
+     */
     private String getBufferText(byte[] _bytes, int size)
     {
         String file_string = "";
@@ -115,6 +151,10 @@ public class BtConnection extends Thread {
         return file_string;
     }
 
+    /**
+     * Передача ошибок получателю через обработчик
+     * @param e ошибка
+     */
     private void showMessage(Exception e){
         handler.obtainMessage(MessageConstants.MESSAGE_ERROR, e.getMessage()).sendToTarget();
     }

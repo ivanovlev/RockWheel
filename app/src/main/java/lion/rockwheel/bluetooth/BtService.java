@@ -11,17 +11,32 @@ import java.util.List;
 import lion.rockwheel.MessageConstants;
 
 /**
- * Created by lion on 6/4/17.
+ * Сервис для работы с bluetooth
  */
-
 public class BtService {
+    /**
+     * Обработчик событий
+     */
     private Handler handler;
+
+    /**
+     * Подключения
+     */
     private List<BtConnection> connections = new ArrayList();
 
+    /**
+     * Конструктор с указанием обработчика событий
+     * @param handler обработчик
+     */
     public BtService(Handler handler){
         this.handler = handler;
     }
 
+    /**
+     * Возвращает BT адаптер
+     * проверяет его наличие и включает, если выключен
+     * @return BT адаптер
+     */
     private BluetoothAdapter GetBtAdapter() {
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -36,6 +51,10 @@ public class BtService {
         return btAdapter;
     }
 
+    /**
+     * Возвращает сприсок спаренных с телефоном BT устройств
+     * @return список BT устройств
+     */
     public List<BtDevice> GetDevices(){
         BluetoothAdapter btAdapter = GetBtAdapter();
 
@@ -52,6 +71,10 @@ public class BtService {
         return devices;
     }
 
+    /**
+     * Подключиться к BT устройству по MAC адресу
+     * @param address MAC адрес устройства
+     */
     public void listenDevice(String address){
         BluetoothDevice device = GetBtAdapter().getRemoteDevice(address);
         if (device != null){
@@ -69,17 +92,10 @@ public class BtService {
         }
     }
 
-    private BtDevice getDevice(String address) {
-        for (BtDevice device : GetDevices()) {
-            if (device.getDevice().getAddress().equals(address)){
-                return device;
-            }
-        }
-
-        showMessage(String.format("Адрес %1$s не найден", address));
-        return null;
-    }
-
+    /**
+     * Отправляет сообщение получателю через обработчик
+     * @param text текст сообщения
+     */
     private void showMessage(CharSequence text){
         handler.obtainMessage(MessageConstants.MESSAGE_ERROR, text).sendToTarget();
     }

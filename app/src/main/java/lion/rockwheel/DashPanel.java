@@ -86,7 +86,7 @@ public class DashPanel extends AppCompatActivity {
         viewport.setMaxY(40);
         viewport.setMinY(0);
 
-        updateChart(DbHelper.getLastInfo());
+        updateChart();
     }
 
     private Handler getHandler() {
@@ -114,7 +114,7 @@ public class DashPanel extends AppCompatActivity {
                                                         info.maxSpeed,
                                                         info.voltage,
                                                         format.format(info.distance)));
-                        updateChart(info);
+                        updateChart();
 
                         float s = info.getSpeedPecent(30);
                         barSpeed.setProgress((int)s);
@@ -154,19 +154,14 @@ public class DashPanel extends AppCompatActivity {
         };
     }
 
-    private void updateChart(BtDeviceInfo current){
+    private void updateChart(){
+        GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
         try {
-            Date start = new Date();
-
-            GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
             for (Series series : gvTrip.getSeries()) {
-                ((LineGraphSeries)series).resetData(DbHelper.getHistory(current, 0.2f));
+                ((LineGraphSeries)series).resetData(DbHelper.getHistory());
                 gvTrip.getViewport().setMaxX(series.getHighestValueX());
                 gvTrip.getViewport().setMinX(series.getLowestValueX());
             }
-            Date finish = new Date();
-
-            showMessage(String.valueOf(finish.getTime()-start.getTime()));
         }catch (Exception e){
             showMessage(e.getMessage());
         }
