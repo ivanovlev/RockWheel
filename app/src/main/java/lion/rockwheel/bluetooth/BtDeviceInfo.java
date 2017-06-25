@@ -2,8 +2,6 @@ package lion.rockwheel.bluetooth;
 
 import com.orm.SugarRecord;
 
-import java.util.Date;
-
 /**
  * Класс информации о девайсе в момент времени
  * */
@@ -29,14 +27,9 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
     public float distance = 0;
 
     /**
-     * Сессия устройства
-     */
-    public float session = 0;
-
-    /**
      * Дата фиксации данных
      */
-    public Date date = new Date();
+    public float date = System.nanoTime();
 
     /**
      * Конструктор по умолчанию (для sql lite)
@@ -53,28 +46,7 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
         String[] split = rawInfo.split(",");
 
         speed = Float.parseFloat(split[0])/10;
-        maxSpeed = Float.parseFloat(split[1])/10;
         voltage = Float.parseFloat(split[2])/10;
-        distance = Float.parseFloat(split[3])/10000;
-        session = Float.parseFloat(split[4]);
-    }
-
-    /**
-     * Корректирует текущие данные по указанному состоянию
-     * Для восстановления по предыдущей сессии после отключения питания BT устройства
-     * @param last
-     * @return
-     */
-    public BtDeviceInfo update(BtDeviceInfo last){
-        if (last != null && last.session != session){
-            if (last.maxSpeed > maxSpeed){
-                maxSpeed = last.maxSpeed;
-            }
-
-            distance += last.distance;
-        }
-
-        return this;
     }
 
     /**

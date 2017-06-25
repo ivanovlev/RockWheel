@@ -88,7 +88,6 @@ public class BtConnection extends Thread {
         String result = "";
         InputStream inStream;
         BluetoothSocket socket;
-        BtDeviceInfo lastInfo = DbHelper.getLastInfo();
 
         // слушаем поток пока живо соединиение
         try {
@@ -110,9 +109,10 @@ public class BtConnection extends Thread {
                         result = rawInfo.substring(start + 1, end);
                         rawInfo = rawInfo.substring(end + 1);
 
-                        BtDeviceInfo info = new BtDeviceInfo(result).update(lastInfo);
                         // отправляем результат в GUI
-                        handler.obtainMessage(MessageConstants.MESSAGE_READ, DbHelper.save(info)).sendToTarget();
+                        if (listen){
+                            handler.obtainMessage(MessageConstants.MESSAGE_READ, DbHelper.save(new BtDeviceInfo(result))).sendToTarget();
+                        }
                     }
                 }
 

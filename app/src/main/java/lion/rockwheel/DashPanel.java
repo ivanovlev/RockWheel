@@ -16,14 +16,11 @@ import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
-import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.Series;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import lion.rockwheel.bluetooth.BtDeviceInfo;
@@ -100,7 +97,7 @@ public class DashPanel extends AppCompatActivity {
         TextView tbVoltage = (TextView) findViewById(R.id.tbVoltage);
         FrameLayout.LayoutParams tbVoltagePos = (FrameLayout.LayoutParams) findViewById(R.id.tbVoltagePos).getLayoutParams();
 
-        DecimalFormat format = new DecimalFormat("#0.0");
+        DecimalFormat format = new DecimalFormat("#0.00");
         DecimalFormat intFormat = new DecimalFormat("##");
 
         return new Handler() {
@@ -127,7 +124,6 @@ public class DashPanel extends AppCompatActivity {
                         tbVoltagePos.bottomMargin = (int)convertToPt(v);
 
                         setTitle(String.format("RockWheel %1$ss (Connected)", batterySeries));
-
                         break;
 
                     case MessageConstants.MESSAGE_ERROR:
