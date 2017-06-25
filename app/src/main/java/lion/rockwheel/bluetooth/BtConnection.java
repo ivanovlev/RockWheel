@@ -7,8 +7,8 @@ import android.os.Handler;
 import java.io.InputStream;
 import java.util.UUID;
 
-import lion.rockwheel.helpers.DbHelper;
 import lion.rockwheel.MessageConstants;
+import lion.rockwheel.helpers.DbHelper;
 
 /**
  * Работа с bluetooth устройством
@@ -82,6 +82,7 @@ public class BtConnection extends Thread {
      * Прослушка COM порта к bluetooth устройству
      */
     public void run() {
+        Long lastRespondTime = null; // время последнего ответа
         byte[] mmBuffer = new byte[64];
         int numBytes = 0; // bytes returned from read()
         String rawInfo = "";
@@ -89,41 +90,44 @@ public class BtConnection extends Thread {
         InputStream inStream;
         BluetoothSocket socket;
 
-        // слушаем поток пока живо соединиение
-        try {
-            socket = connect(3);
-            if (socket != null && socket.isConnected()) {
-                inStream = socket.getInputStream();
-                listen = true;
+        // таймаут попыток 5 минут, после чего поездка считается оконченной
+        double timeOut = 5 * 60 * 1E9;//)
+        while (lastRespondTime == null || (listen && System.nanoTime() - lastRespondTime < timeOut)) {
+            // слушаем поток пока живо соединиение
+            try {
+                socket = connect(3);
+                if (socket != null && socket.isConnected()) {
+                    inStream = socket.getInputStream();
+                    listen = true;
 
-                while (listen) {
-                    // читаем поток в буфер
-                    numBytes = inStream.read(mmBuffer);
+                    while (listen) {
+                        // фиксируем активность
+                        lastRespondTime = System.nanoTime();
 
-                    rawInfo = rawInfo + getBufferText(mmBuffer, numBytes);
+                        // читаем поток в буфер
+                        numBytes = inStream.read(mmBuffer);
 
-                    int start = rawInfo.indexOf("<");
-                    int end = rawInfo.indexOf(">");
+                        rawInfo = rawInfo + getBufferText(mmBuffer, numBytes);
 
-                    if (start >= 0 && end >= 0) {
-                        result = rawInfo.substring(start + 1, end);
-                        rawInfo = rawInfo.substring(end + 1);
+                        int start = rawInfo.indexOf("<");
+                        int end = rawInfo.indexOf(">");
 
-                        // отправляем результат в GUI
-                        if (listen){
+                        if (start >= 0 && end >= 0) {
+                            result = rawInfo.substring(start + 1, end);
+                            rawInfo = rawInfo.substring(end + 1);
+
+                            // отправляем результат в GUI
                             handler.obtainMessage(MessageConstants.MESSAGE_READ, DbHelper.save(new BtDeviceInfo(result))).sendToTarget();
                         }
                     }
-                }
 
-                inStream.close();
-                socket.close();
+                    inStream.close();
+                    socket.close();
+                }
+            } catch (Exception e) {
+                showMessage(e);
             }
         }
-        catch (Exception e) {
-            showMessage(e);
-        }
-
     }
 
     /**

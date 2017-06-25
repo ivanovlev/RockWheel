@@ -70,7 +70,7 @@ public class SettingsPanel extends AppCompatActivity {
         Button btnReset = (Button)findViewById(R.id.btnReset);
         btnReset.setOnClickListener((view) -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Shutdown wheel before continue!");
+            builder.setMessage("Are you sure?");
             builder.setCancelable(true);
 
             builder.setPositiveButton(
