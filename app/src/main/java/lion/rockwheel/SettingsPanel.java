@@ -12,14 +12,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.ObjectInputValidation;
 
 import lion.rockwheel.bluetooth.BtDevice;
 import lion.rockwheel.bluetooth.BtService;
 import lion.rockwheel.helpers.CfgHelper;
 import lion.rockwheel.helpers.DbHelper;
 
-public class SettingsPanel extends AppCompatActivity {
+public class SettingsPanel extends BasePanel {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,23 +58,13 @@ public class SettingsPanel extends AppCompatActivity {
             dialog.show();
         }));
 
-        btnDevice.setText(CfgHelper.getLastBtDeviceAddress());
-
-        EditText etLowCellVoltage = (EditText)findViewById(R.id.etLowCellVoltage);
-        etLowCellVoltage.setText(String.valueOf(CfgHelper.getCellLow()));
-
-        EditText etHighCellVoltage = (EditText)findViewById(R.id.etHighCellVoltage);
-        etHighCellVoltage.setText(String.valueOf(CfgHelper.getCellHigh()));
-
-        EditText etCellsCount = (EditText)findViewById(R.id.etBatterySeries);
-        etCellsCount.setText(String.valueOf(CfgHelper.getBatterySeries()));
-
-        EditText etConnectionTimeOut = (EditText)findViewById(R.id.etConnectionTimeOut);
-        etConnectionTimeOut.setText(String.valueOf(CfgHelper.getConnectionTimeOut()));
-
-        EditText etSpeedCorr = (EditText)findViewById(R.id.etSpeedCorr);
-        etSpeedCorr.setText(String.valueOf(CfgHelper.getSpeedCorr()));
-
+        setViewText(R.id.btnDevice, CfgHelper.getLastBtDeviceAddress());
+        setViewText(R.id.etLowCellVoltage, CfgHelper.getCellLow());
+        setViewText(R.id.etHighCellVoltage, CfgHelper.getCellHigh());
+        setViewText(R.id.etBatterySeries, CfgHelper.getBatterySeries());
+        setViewText(R.id.etConnectionTimeOut, CfgHelper.getConnectionTimeOut());
+        setViewText(R.id.etSpeedCorr, CfgHelper.getSpeedCorr());
+        setViewText(R.id.etSpeedLimit, CfgHelper.getSpeedLimit());
 
         Button btnReset = (Button)findViewById(R.id.btnReset);
         btnReset.setOnClickListener((view) -> {
@@ -97,29 +90,13 @@ public class SettingsPanel extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Button btnDevices = (Button) findViewById(R.id.btnDevice);
-        String deviceAddress = btnDevices.getText().toString();
-        CfgHelper.setLastBtDeviceAddress(deviceAddress);
-
-        EditText etLowCellVoltage = (EditText)findViewById(R.id.etLowCellVoltage);
-        String cellLow = etLowCellVoltage.getText().toString();
-        CfgHelper.setCellLow(Float.parseFloat(cellLow));
-
-        EditText etHighCellVoltage = (EditText)findViewById(R.id.etHighCellVoltage);
-        String cellHigh = etHighCellVoltage.getText().toString();
-        CfgHelper.setCellHigh(Float.parseFloat(cellHigh));
-
-        EditText etBatterySeries = (EditText)findViewById(R.id.etBatterySeries);
-        String batterySeries = etBatterySeries.getText().toString();
-        CfgHelper.setBatterySeries(Integer.parseInt(batterySeries));
-
-        EditText etConnectionTimeOut = (EditText)findViewById(R.id.etConnectionTimeOut);
-        String connectionTimeOut = etConnectionTimeOut.getText().toString();
-        CfgHelper.setConnectionTimeOut(Integer.parseInt(connectionTimeOut));
-
-        EditText etSpeedCorr = (EditText)findViewById(R.id.etSpeedCorr);
-        String speedCorr = etSpeedCorr.getText().toString();
-        CfgHelper.setSpeedCorr(Float.parseFloat(speedCorr));
+        CfgHelper.setLastBtDeviceAddress(getViewText(R.id.btnDevice));
+        CfgHelper.setCellLow(Float.parseFloat(getViewText(R.id.etLowCellVoltage)));
+        CfgHelper.setCellHigh(Float.parseFloat(getViewText(R.id.etHighCellVoltage)));
+        CfgHelper.setBatterySeries(Integer.parseInt(getViewText(R.id.etBatterySeries)));
+        CfgHelper.setConnectionTimeOut(Integer.parseInt(getViewText(R.id.etConnectionTimeOut)));
+        CfgHelper.setSpeedCorr(Float.parseFloat(getViewText(R.id.etSpeedCorr)));
+        CfgHelper.setSpeedLimit(Integer.parseInt(getViewText(R.id.etSpeedLimit)));
 
         finish();
     }
@@ -129,7 +106,7 @@ public class SettingsPanel extends AppCompatActivity {
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case MessageConstants.MESSAGE_ERROR:
-                        ShowMessage(msg.obj.toString());
+                        showMessage(msg.obj.toString());
                         break;
 
                     case MessageConstants.REQUEST_ENABLE_BT:
@@ -138,9 +115,5 @@ public class SettingsPanel extends AppCompatActivity {
                 }
             }
         };
-    }
-
-    private void ShowMessage(CharSequence text){
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 }

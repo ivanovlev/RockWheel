@@ -15,23 +15,22 @@ public class CfgHelper {
     private static final String cellLow = "cellLow";
     private static final String cellHigh = "cellHigh";
     private static final String speedCorr = "speedCorr";
+    private static final String speedLimit = "speedLimit";
     private static final String connTimeOut = "connTimeOut";
 
     //region Getters
 
     public static String getLastBtDeviceAddress(){ return getOption(lastBtDevice, ""); }
 
-    public static Integer getBatterySeries(){
-        return getOption(batterySeries, 14);
-    }
+    public static Integer getBatterySeries(){ return getOption(batterySeries, 14); }
 
-    public static Float getCellLow(){
-        return getOption(cellLow, 3.3f);
-    }
+    public static Float getCellLow(){ return getOption(cellLow, 3.3f); }
 
     public static Float getCellHigh(){ return getOption(cellHigh, 4.2f); }
 
     public static Float getSpeedCorr(){ return getOption(speedCorr, 1.19f); }
+
+    public static Integer getSpeedLimit(){ return getOption(speedLimit, 30); }
 
     public static Integer getConnectionTimeOut(){ return getOption(connTimeOut, 5); }
 
@@ -54,6 +53,8 @@ public class CfgHelper {
     }
 
     public static void setSpeedCorr(Float corr){ saveOption(speedCorr, corr); }
+
+    public static void setSpeedLimit(Integer limit){ saveOption(speedLimit, limit); }
 
     public static void setConnectionTimeOut(Integer timeOut){ saveOption(connTimeOut, timeOut); }
 

@@ -28,10 +28,11 @@ import lion.rockwheel.bluetooth.BtService;
 import lion.rockwheel.helpers.CfgHelper;
 import lion.rockwheel.helpers.DbHelper;
 
-public class DashPanel extends AppCompatActivity {
+public class DashPanel extends BasePanel {
     int batterySeries = 0;
     float cellLow = 0;
     float cellHigh = 0;
+    int speedLimit = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +67,14 @@ public class DashPanel extends AppCompatActivity {
         batterySeries = CfgHelper.getBatterySeries();
         cellLow = CfgHelper.getCellLow();
         cellHigh = CfgHelper.getCellHigh();
-        TextView barVoltageHigh = (TextView) findViewById(R.id.barVoltageHigh);
-        TextView barVoltageLow = (TextView) findViewById(R.id.barVoltageLow);
-        DecimalFormat format = new DecimalFormat("#0.0");
-        barVoltageHigh.setText(format.format(batterySeries * cellHigh));
-        barVoltageLow.setText(format.format(batterySeries * cellLow));
+        speedLimit = CfgHelper.getSpeedLimit();
 
-        setTitle(String.format("RockWheel %1$ss", batterySeries));
+        DecimalFormat format = new DecimalFormat("#0.0");
+        setViewText(R.id.barVoltageHigh, format.format(batterySeries * cellHigh));
+        setViewText(R.id.barVoltageLow, format.format(batterySeries * cellLow));
+        setViewText(R.id.barSpeedHigh, String.valueOf(speedLimit));
+
+        updateHeader("");
 
         GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
         gvTrip.removeAllSeries();
@@ -113,7 +115,7 @@ public class DashPanel extends AppCompatActivity {
                                                         format.format(info.distance)));
                         updateChart();
 
-                        float s = info.getSpeedPecent(30);
+                        float s = info.getSpeedPecent(speedLimit);
                         barSpeed.setProgress((int)s);
                         tbSpeed.setText(intFormat.format(info.speed));
                         tbSpeedPos.bottomMargin = (int)convertToPt(s);
@@ -209,9 +211,5 @@ public class DashPanel extends AppCompatActivity {
         if (reconnect.contains(requestCode)){
             findViewById(R.id.fab).callOnClick();
         }
-    }
-
-    private void showMessage(CharSequence text){
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 }
