@@ -27,7 +27,6 @@ public class SettingsPanel extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        CfgHelper cfgService = new CfgHelper(this);
         BtService btService = new BtService(getHandler());
 
         Button btnDevice = (Button)findViewById(R.id.btnDevice);
@@ -56,19 +55,23 @@ public class SettingsPanel extends AppCompatActivity {
             dialog.show();
         }));
 
-        btnDevice.setText(cfgService.getLastBtDeviceAddress());
+        btnDevice.setText(CfgHelper.getLastBtDeviceAddress());
 
         EditText etLowCellVoltage = (EditText)findViewById(R.id.etLowCellVoltage);
-        etLowCellVoltage.setText(String.valueOf(cfgService.getCellLow()));
+        etLowCellVoltage.setText(String.valueOf(CfgHelper.getCellLow()));
 
         EditText etHighCellVoltage = (EditText)findViewById(R.id.etHighCellVoltage);
-        etHighCellVoltage.setText(String.valueOf(cfgService.getCellHigh()));
+        etHighCellVoltage.setText(String.valueOf(CfgHelper.getCellHigh()));
 
         EditText etCellsCount = (EditText)findViewById(R.id.etBatterySeries);
-        etCellsCount.setText(String.valueOf(cfgService.getBatterySeries()));
+        etCellsCount.setText(String.valueOf(CfgHelper.getBatterySeries()));
 
         EditText etConnectionTimeOut = (EditText)findViewById(R.id.etConnectionTimeOut);
-        etConnectionTimeOut.setText(String.valueOf(cfgService.getConnectionTimeOut()));
+        etConnectionTimeOut.setText(String.valueOf(CfgHelper.getConnectionTimeOut()));
+
+        EditText etSpeedCorr = (EditText)findViewById(R.id.etSpeedCorr);
+        etSpeedCorr.setText(String.valueOf(CfgHelper.getSpeedCorr()));
+
 
         Button btnReset = (Button)findViewById(R.id.btnReset);
         btnReset.setOnClickListener((view) -> {
@@ -94,27 +97,29 @@ public class SettingsPanel extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        CfgHelper cfgService = new CfgHelper(this);
-
         Button btnDevices = (Button) findViewById(R.id.btnDevice);
         String deviceAddress = btnDevices.getText().toString();
-        cfgService.setLastBtDeviceAddress(deviceAddress);
+        CfgHelper.setLastBtDeviceAddress(deviceAddress);
 
         EditText etLowCellVoltage = (EditText)findViewById(R.id.etLowCellVoltage);
         String cellLow = etLowCellVoltage.getText().toString();
-        cfgService.setCellLow(Float.parseFloat(cellLow));
+        CfgHelper.setCellLow(Float.parseFloat(cellLow));
 
         EditText etHighCellVoltage = (EditText)findViewById(R.id.etHighCellVoltage);
         String cellHigh = etHighCellVoltage.getText().toString();
-        cfgService.setCellHigh(Float.parseFloat(cellHigh));
+        CfgHelper.setCellHigh(Float.parseFloat(cellHigh));
 
         EditText etBatterySeries = (EditText)findViewById(R.id.etBatterySeries);
         String batterySeries = etBatterySeries.getText().toString();
-        cfgService.setBatterySeries(Integer.parseInt(batterySeries));
+        CfgHelper.setBatterySeries(Integer.parseInt(batterySeries));
 
         EditText etConnectionTimeOut = (EditText)findViewById(R.id.etConnectionTimeOut);
         String connectionTimeOut = etConnectionTimeOut.getText().toString();
-        cfgService.setConnectionTimeOut(Integer.parseInt(connectionTimeOut));
+        CfgHelper.setConnectionTimeOut(Integer.parseInt(connectionTimeOut));
+
+        EditText etSpeedCorr = (EditText)findViewById(R.id.etSpeedCorr);
+        String speedCorr = etSpeedCorr.getText().toString();
+        CfgHelper.setSpeedCorr(Float.parseFloat(speedCorr));
 
         finish();
     }

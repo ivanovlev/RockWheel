@@ -8,7 +8,9 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import lion.rockwheel.MessageConstants;
+import lion.rockwheel.helpers.CfgHelper;
 import lion.rockwheel.helpers.DbHelper;
+import lion.rockwheel.model.BtDeviceInfo;
 
 /**
  * Работа с bluetooth устройством
@@ -81,12 +83,14 @@ public class BtConnection extends Thread {
      */
     public void run() {
         Long lastRespondTime = null; // время последнего ответа
+        float speedCorr = CfgHelper.getSpeedCorr(); //корректировка скорости по радиусу
         byte[] mmBuffer = new byte[64];
         int numBytes = 0; // bytes returned from read()
         String rawInfo = "";
         String result = "";
         InputStream inStream;
         BluetoothSocket socket;
+
 
         // после превышения таймаута поездка считается оконченной
         while (listen == null || (listen && System.nanoTime() - lastRespondTime < timeOut)) {
@@ -95,7 +99,7 @@ public class BtConnection extends Thread {
                 double expire =  (timeOut - (System.nanoTime() - lastRespondTime)) / (1E9 * 60);
                 int min = (int)expire;
                 int sec = (int)((expire - min) * 60);
-                sendState(String.format("Reconnect... %1$s:%2$02d left", min, sec));
+                sendState(String.format("Trying to reconnect for %1$s:%2$02d", min, sec));
             }else {
                 listen = false;
             }
@@ -124,7 +128,7 @@ public class BtConnection extends Thread {
                             rawInfo = rawInfo.substring(end + 1);
 
                             // отправляем результат в GUI
-                            sendInfo(DbHelper.save(new BtDeviceInfo(result)));
+                            sendInfo(DbHelper.save(new BtDeviceInfo(result, speedCorr)));
                         }
                     }
 

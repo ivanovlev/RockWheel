@@ -23,7 +23,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import lion.rockwheel.bluetooth.BtDeviceInfo;
+import lion.rockwheel.model.BtDeviceInfo;
 import lion.rockwheel.bluetooth.BtService;
 import lion.rockwheel.helpers.CfgHelper;
 import lion.rockwheel.helpers.DbHelper;
@@ -40,17 +40,17 @@ public class DashPanel extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        CfgHelper cfg = new CfgHelper(this);
         BtService btService = new BtService(getHandler());
 
         View fab = findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
             try {
-                updateGui(cfg);
+                updateGui();
 
-                String lastAddress = cfg.getLastBtDeviceAddress();
-                if (lastAddress != null){
-                    btService.listenDevice(lastAddress, cfg.getConnectionTimeOut());
+                String lastAddress = CfgHelper.getLastBtDeviceAddress();
+
+                if (!lastAddress.equals("")){
+                    btService.listenDevice(lastAddress, CfgHelper.getConnectionTimeOut());
                 }
             }
             catch (Exception e){
@@ -62,10 +62,10 @@ public class DashPanel extends AppCompatActivity {
         fab.callOnClick();
     }
 
-    private void updateGui(CfgHelper cfg) {
-        batterySeries = cfg.getBatterySeries();
-        cellLow = cfg.getCellLow();
-        cellHigh = cfg.getCellHigh();
+    private void updateGui() {
+        batterySeries = CfgHelper.getBatterySeries();
+        cellLow = CfgHelper.getCellLow();
+        cellHigh = CfgHelper.getCellHigh();
         TextView barVoltageHigh = (TextView) findViewById(R.id.barVoltageHigh);
         TextView barVoltageLow = (TextView) findViewById(R.id.barVoltageLow);
         DecimalFormat format = new DecimalFormat("#0.0");
@@ -80,7 +80,7 @@ public class DashPanel extends AppCompatActivity {
         Viewport viewport = gvTrip.getViewport();
         viewport.setXAxisBoundsManual(true);
         viewport.setYAxisBoundsManual(true);
-        viewport.setMaxY(40);
+        viewport.setMaxY(45);
         viewport.setMinY(0);
 
         updateChart();

@@ -1,18 +1,15 @@
 package lion.rockwheel.helpers;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
+import com.orm.query.Condition;
+import com.orm.query.Select;
 
-import static android.content.SharedPreferences.Editor;
+import lion.rockwheel.model.ConfigInfo;
 
 /**
  * Created by lion on 6/5/17.
  */
 
 public class CfgHelper {
-    private SharedPreferences sharedPref = null;
-
     private static final String lastBtDevice = "lastBtDevice";
     private static final String batterySeries = "batterySeries";
     private static final String cellLow = "cellLow";
@@ -20,76 +17,71 @@ public class CfgHelper {
     private static final String speedCorr = "speedCorr";
     private static final String connTimeOut = "connTimeOut";
 
-    public CfgHelper(Activity activity){
-        sharedPref = activity.getSharedPreferences("AppData", Context.MODE_PRIVATE);
-    }
-
     //region Getters
 
-    public String getLastBtDeviceAddress(){
-        return sharedPref.getString(lastBtDevice, null);
+    public static String getLastBtDeviceAddress(){ return getOption(lastBtDevice, ""); }
+
+    public static Integer getBatterySeries(){
+        return getOption(batterySeries, 14);
     }
 
-    public Integer getBatterySeries(){
-        return sharedPref.getInt(batterySeries, 14);
+    public static Float getCellLow(){
+        return getOption(cellLow, 3.3f);
     }
 
-    public Float getCellLow(){
-        return sharedPref.getFloat(cellLow, 3.3f);
-    }
+    public static Float getCellHigh(){ return getOption(cellHigh, 4.2f); }
 
-    public Float getCellHigh(){
-        return sharedPref.getFloat(cellHigh, 4.2f);
-    }
+    public static Float getSpeedCorr(){ return getOption(speedCorr, 1.19f); }
 
-    public Float getSpeedCorr(){
-        return sharedPref.getFloat(speedCorr, 1.33f);
-    }
-
-    public Integer getConnectionTimeOut(){ return sharedPref.getInt(connTimeOut, 5); }
+    public static Integer getConnectionTimeOut(){ return getOption(connTimeOut, 5); }
 
     //endregion
 
     //region Setters
 
-    public void setBatterySeries(Integer series){
-        saveOption(batterySeries, series);
-    }
+    public static void setBatterySeries(Integer series){ saveOption(batterySeries, series); }
 
-    public void setCellLow(Float lowLevel){
+    public static void setCellLow(Float lowLevel){
         saveOption(cellLow, lowLevel);
     }
 
-    public void setCellHigh(Float highLevel){
+    public static void setCellHigh(Float highLevel){
         saveOption(cellHigh, highLevel);
     }
 
-    public void setLastBtDeviceAddress(String address){
+    public static void setLastBtDeviceAddress(String address){
         saveOption(lastBtDevice, address);
     }
 
-    public void setSpeedCorr(Float corr){ saveOption(speedCorr, corr); }
+    public static void setSpeedCorr(Float corr){ saveOption(speedCorr, corr); }
 
-    public void setConnectionTimeOut(Integer timeOut){ saveOption(connTimeOut, timeOut); }
+    public static void setConnectionTimeOut(Integer timeOut){ saveOption(connTimeOut, timeOut); }
 
     //endregion
 
-    private void saveOption(String option, Object value)
-    {
-        Editor editor = sharedPref.edit();
+    private static void saveOption(String option, Object value){
+        ConfigInfo info = Select.from(ConfigInfo.class)
+                .where(Condition.prop("option").eq(option))
+                .first();
 
-        if (value instanceof Integer){
-            editor.putInt(option, (int)value);
+        if (info != null){
+            info.setValue(value);
+        }else {
+            info = new ConfigInfo(option, value);
         }
 
-        if (value instanceof Float){
-            editor.putFloat(option, (Float)value);
+        info.save();
+    }
+
+    private static <T> T getOption(String option, T defaultValue){
+        ConfigInfo info = Select.from(ConfigInfo.class)
+                .where(Condition.prop("option").eq(option))
+                .first();
+
+        if (info != null){
+            return (T)info.getValue();
         }
 
-        if (value instanceof String){
-            editor.putString(option, (String)value);
-        }
-
-        editor.commit();
+        return defaultValue;
     }
 }

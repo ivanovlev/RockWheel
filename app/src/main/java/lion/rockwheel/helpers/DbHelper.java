@@ -5,7 +5,7 @@ import com.orm.query.Condition;
 import com.orm.query.Select;
 import java.util.ArrayList;
 import java.util.List;
-import lion.rockwheel.bluetooth.BtDeviceInfo;
+import lion.rockwheel.model.BtDeviceInfo;
 
 /**
  * Помощник работы с БД
@@ -55,8 +55,7 @@ public class DbHelper {
     public static BtDeviceInfo save(BtDeviceInfo newInfo){
         if (lastInfo != null){
             //Получаем среднюю скорость и переводим её из км\ч в м\с
-            //float speedKph = (lastInfo.speed + newInfo.speed) / 2;
-            float speedKph = lastInfo.speed < newInfo.speed ? lastInfo.speed : newInfo.speed;
+            float speedKph = (lastInfo.speed + newInfo.speed) / 2;
             float speedMps = speedKph / 3.6f;
 
             //Получаем время движения с вычесленной средней скоростью

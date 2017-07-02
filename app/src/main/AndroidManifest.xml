@@ -16,10 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data android:name="DATABASE" android:value="device_stats.db" />
-        <meta-data android:name="VERSION" android:value="7" />
+        <meta-data android:name="DATABASE" android:value="rockwheel.db" />
+        <meta-data android:name="VERSION" android:value="10" />
         <meta-data android:name="QUERY_LOG" android:value="false" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="lion.rockwheel" />
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="lion.rockwheel.model" />
 
         <activity
             android:name=".DashPanel"

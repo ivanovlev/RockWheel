@@ -1,4 +1,4 @@
-package lion.rockwheel.bluetooth;
+package lion.rockwheel.model;
 
 import com.orm.SugarRecord;
 
@@ -42,10 +42,10 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
      * Конструктор из строки данных устройства
      * @param rawInfo строка данных устройства
      */
-    public BtDeviceInfo(String rawInfo){
+    public BtDeviceInfo(String rawInfo, float speedCorr){
         String[] split = rawInfo.split(",");
 
-        speed = Float.parseFloat(split[0])/10;
+        speed = Float.parseFloat(split[0]) * speedCorr /10;
         voltage = Float.parseFloat(split[2])/10;
     }
 
