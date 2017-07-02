@@ -67,6 +67,9 @@ public class SettingsPanel extends AppCompatActivity {
         EditText etCellsCount = (EditText)findViewById(R.id.etBatterySeries);
         etCellsCount.setText(String.valueOf(cfgService.getBatterySeries()));
 
+        EditText etConnectionTimeOut = (EditText)findViewById(R.id.etConnectionTimeOut);
+        etConnectionTimeOut.setText(String.valueOf(cfgService.getConnectionTimeOut()));
+
         Button btnReset = (Button)findViewById(R.id.btnReset);
         btnReset.setOnClickListener((view) -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -108,6 +111,10 @@ public class SettingsPanel extends AppCompatActivity {
         EditText etBatterySeries = (EditText)findViewById(R.id.etBatterySeries);
         String batterySeries = etBatterySeries.getText().toString();
         cfgService.setBatterySeries(Integer.parseInt(batterySeries));
+
+        EditText etConnectionTimeOut = (EditText)findViewById(R.id.etConnectionTimeOut);
+        String connectionTimeOut = etConnectionTimeOut.getText().toString();
+        cfgService.setConnectionTimeOut(Integer.parseInt(connectionTimeOut));
 
         finish();
     }

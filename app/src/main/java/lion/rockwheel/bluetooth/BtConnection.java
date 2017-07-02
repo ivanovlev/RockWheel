@@ -14,34 +14,32 @@ import lion.rockwheel.helpers.DbHelper;
  * Работа с bluetooth устройством
  */
 public class BtConnection extends Thread {
-    /**
-     * Id COM порта телефона
-     */
+
+    // Id COM порта телефона
     public final static UUID SppId = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
-    /**
-     * bluetooth устройство
-     */
+    // Bluetooth устройство
     BluetoothDevice device;
 
-    /**
-     * Флаг прослушки COM порта
-     */
+    // Таймаут реконнекта
+    Double timeOut;
+
+    // Флаг прослушки COM порта
     Boolean listen;
 
-    /**
-     * Обработчик событий
-     */
+    // Обработчик событий
     Handler handler;
 
     /**
      * Конструктор с передачей bluetooth устройства и обработчика событий
      * @param device bluetooth устройство
+     * @param timeOut таймаут реконнекта
      * @param handler обработчик событий
      */
-    public BtConnection(BluetoothDevice device, Handler handler) {
+    public BtConnection(BluetoothDevice device, Integer timeOut, Handler handler) {
         this.handler = handler;
         this.device = device;
+        this.timeOut = timeOut * 60 * 1E9;
 
         start();
     }
@@ -90,9 +88,18 @@ public class BtConnection extends Thread {
         InputStream inStream;
         BluetoothSocket socket;
 
-        // таймаут попыток 5 минут, после чего поездка считается оконченной
-        double timeOut = 5 * 60 * 1E9;//)
-        while (lastRespondTime == null || (listen && System.nanoTime() - lastRespondTime < timeOut)) {
+        // после превышения таймаута поездка считается оконченной
+        while (listen == null || (listen && System.nanoTime() - lastRespondTime < timeOut)) {
+
+            if (lastRespondTime != null){
+                double expire =  (timeOut - (System.nanoTime() - lastRespondTime)) / (1E9 * 60);
+                int min = (int)expire;
+                int sec = (int)((expire - min) * 60);
+                sendState(String.format("Reconnect... %1$s:%2$02d left", min, sec));
+            }else {
+                listen = false;
+            }
+
             // слушаем поток пока живо соединиение
             try {
                 socket = connect(3);
@@ -117,7 +124,7 @@ public class BtConnection extends Thread {
                             rawInfo = rawInfo.substring(end + 1);
 
                             // отправляем результат в GUI
-                            handler.obtainMessage(MessageConstants.MESSAGE_READ, DbHelper.save(new BtDeviceInfo(result))).sendToTarget();
+                            sendInfo(DbHelper.save(new BtDeviceInfo(result)));
                         }
                     }
 
@@ -125,8 +132,12 @@ public class BtConnection extends Thread {
                     socket.close();
                 }
             } catch (Exception e) {
-                showMessage(e);
+                sendMessage(e);
             }
+        }
+
+        if (lastRespondTime == null){
+            sendMessage("Подключение не удалось");
         }
     }
 
@@ -155,11 +166,42 @@ public class BtConnection extends Thread {
         return file_string;
     }
 
+    //region Senders
+
+    /**
+     * Передача информации о девайсе получателю через обработчик
+     * @param info информация о девайсе
+     */
+    private void sendInfo(BtDeviceInfo info){
+        sendState("Connected");
+        handler.obtainMessage(MessageConstants.MESSAGE_READ, info).sendToTarget();
+    }
+
     /**
      * Передача ошибок получателю через обработчик
      * @param e ошибка
      */
-    private void showMessage(Exception e){
-        handler.obtainMessage(MessageConstants.MESSAGE_ERROR, e.getMessage()).sendToTarget();
+    private void sendMessage(Exception e){
+        sendMessage(e.getMessage());
     }
+
+    /**
+     * Передача ошибок получателю через обработчик
+     * @param msg ошибка
+     */
+    private void sendMessage(String msg){
+        sendState("");
+        handler.obtainMessage(MessageConstants.MESSAGE_ERROR, msg).sendToTarget();
+    }
+
+
+    /**
+     * Передача сообщений получателю через обработчик
+     * @param msg статус
+     */
+    private void sendState(String msg){
+        handler.obtainMessage(MessageConstants.CONNECTION_STATE, msg).sendToTarget();
+    }
+
+    //endregion
 }

@@ -12,10 +12,13 @@ import static android.content.SharedPreferences.Editor;
 
 public class CfgHelper {
     private SharedPreferences sharedPref = null;
+
     private static final String lastBtDevice = "lastBtDevice";
     private static final String batterySeries = "batterySeries";
     private static final String cellLow = "cellLow";
     private static final String cellHigh = "cellHigh";
+    private static final String speedCorr = "speedCorr";
+    private static final String connTimeOut = "connTimeOut";
 
     public CfgHelper(Activity activity){
         sharedPref = activity.getSharedPreferences("AppData", Context.MODE_PRIVATE);
@@ -31,13 +34,19 @@ public class CfgHelper {
         return sharedPref.getInt(batterySeries, 14);
     }
 
-    public float getCellLow(){
+    public Float getCellLow(){
         return sharedPref.getFloat(cellLow, 3.3f);
     }
 
-    public float getCellHigh(){
+    public Float getCellHigh(){
         return sharedPref.getFloat(cellHigh, 4.2f);
     }
+
+    public Float getSpeedCorr(){
+        return sharedPref.getFloat(speedCorr, 1.33f);
+    }
+
+    public Integer getConnectionTimeOut(){ return sharedPref.getInt(connTimeOut, 5); }
 
     //endregion
 
@@ -58,6 +67,10 @@ public class CfgHelper {
     public void setLastBtDeviceAddress(String address){
         saveOption(lastBtDevice, address);
     }
+
+    public void setSpeedCorr(Float corr){ saveOption(speedCorr, corr); }
+
+    public void setConnectionTimeOut(Integer timeOut){ saveOption(connTimeOut, timeOut); }
 
     //endregion
 

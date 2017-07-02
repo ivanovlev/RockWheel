@@ -50,7 +50,7 @@ public class DashPanel extends AppCompatActivity {
 
                 String lastAddress = cfg.getLastBtDeviceAddress();
                 if (lastAddress != null){
-                    btService.listenDevice(lastAddress);
+                    btService.listenDevice(lastAddress, cfg.getConnectionTimeOut());
                 }
             }
             catch (Exception e){
@@ -122,8 +122,6 @@ public class DashPanel extends AppCompatActivity {
                         barVoltage.setProgress((int)v);
                         tbVoltage.setText(intFormat.format(info.voltage));
                         tbVoltagePos.bottomMargin = (int)convertToPt(v);
-
-                        setTitle(String.format("RockWheel %1$ss (Connected)", batterySeries));
                         break;
 
                     case MessageConstants.MESSAGE_ERROR:
@@ -137,9 +135,11 @@ public class DashPanel extends AppCompatActivity {
                         barVoltage.setProgress(0);
                         tbVoltagePos.bottomMargin = 0;
 
-                        setTitle(String.format("RockWheel %1$ss", batterySeries));
-
                         showMessage(msg.obj.toString());
+                        break;
+
+                    case MessageConstants.CONNECTION_STATE:
+                        updateHeader(msg.obj.toString());
                         break;
 
                     case MessageConstants.REQUEST_ENABLE_BT:
@@ -148,6 +148,15 @@ public class DashPanel extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    private void updateHeader(String txt){
+        StringBuilder header = new StringBuilder(String.format("RockWheel %1$ss", batterySeries));
+        if (txt != ""){
+            header.append(String.format(" (%1$s)", txt));
+        }
+
+        setTitle(header.toString());
     }
 
     private void updateChart(){

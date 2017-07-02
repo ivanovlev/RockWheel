@@ -74,8 +74,9 @@ public class BtService {
     /**
      * Подключиться к BT устройству по MAC адресу
      * @param address MAC адрес устройства
+     * @param timeOut таймаут реконнекта
      */
-    public void listenDevice(String address){
+    public void listenDevice(String address, Integer timeOut){
         BluetoothDevice device = GetBtAdapter().getRemoteDevice(address);
         if (device != null){
             showMessage(String.format("Подключение к %1$s", device.getName()));
@@ -88,7 +89,7 @@ public class BtService {
                 connections.remove(0);
             }
 
-            connections.add(new BtConnection(device, handler));
+            connections.add(new BtConnection(device, timeOut, handler));
         }
     }
 
