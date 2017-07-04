@@ -56,12 +56,6 @@
         <dex dex="/home/lion/RockWheel/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-bfd45c4d03a6059c7256a59a1f0bb31019de4a9c.jar" />
     </item>
     <item
-        jar="/home/lion/.android/build-cache/5fd7b4d1de987f726ce0627ddd8d48b3fd58de58/output/jars/classes.jar"
-        revision="25.0.2"
-        sha1="07e07903922250dabf50c7d131d6fa069a050305">
-        <dex dex="/home/lion/RockWheel/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-980b01e72997b44896fb177a0e3df9f7fe36abff.jar" />
-    </item>
-    <item
         jar="/home/lion/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/25.3.1/support-annotations-25.3.1.jar"
         revision="25.0.2"
         sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
@@ -96,6 +90,12 @@
         revision="25.0.2"
         sha1="479c1e06db31c432330183f5cae684163f186146">
         <dex dex="/home/lion/RockWheel/app/build/intermediates/transforms/preJackPackagedLibraries/androidTest/debug/jars/8000/1f/javax.annotation-api-1.2-6b0b4e43127bb09e6e90d3b55bd407ee29ddcfc2.jar" />
+    </item>
+    <item
+        jar="/home/lion/.android/build-cache/877116891ff4595b90aed171fc2ca05866067c33/output/jars/classes.jar"
+        revision="25.0.2"
+        sha1="19a40a8afe0289f6520b25353096ac233e78f69d">
+        <dex dex="/home/lion/RockWheel/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-e3412a072f1ca2048d4d2ecd0f4a7e89cd22ed84.jar" />
     </item>
     <item
         jar="/home/lion/.android/build-cache/3ca5d87eec6c2da6c4afd09865ee8086176fd805/output/jars/classes.jar"

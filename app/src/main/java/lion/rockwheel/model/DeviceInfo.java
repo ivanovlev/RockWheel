@@ -2,13 +2,10 @@ package lion.rockwheel.model;
 
 import com.orm.SugarRecord;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-
 /**
  * Класс информации о девайсе в момент времени
  * */
-public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
+public class DeviceInfo extends SugarRecord {
     /**
      * Текущая скорость
      */
@@ -37,7 +34,7 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
     /**
      * Конструктор по умолчанию (для sql lite)
      */
-    public BtDeviceInfo(){
+    public DeviceInfo(){
 
     }
 
@@ -45,7 +42,7 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
      * Конструктор из строки данных устройства
      * @param rawInfo строка данных устройства
      */
-    public BtDeviceInfo(String rawInfo, float speedCorr){
+    public DeviceInfo(String rawInfo, float speedCorr){
         String[] split = rawInfo.split(",");
 
         speed = Float.parseFloat(split[0])/10;
@@ -81,7 +78,7 @@ public class BtDeviceInfo extends SugarRecord<BtDeviceInfo> {
      * @param info друга информация
      * @return совпадает или нет
      */
-    public boolean equals(BtDeviceInfo info){
+    public boolean equals(DeviceInfo info){
         if (info != null && info.distance == distance && info.speed == speed && info.voltage == voltage){
             return true;
         }

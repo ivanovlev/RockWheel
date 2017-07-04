@@ -5,7 +5,7 @@ import com.orm.SugarRecord;
 /**
  * Класс опций настроек
  * */
-public class ConfigInfo extends SugarRecord<ConfigInfo> {
+public class ConfigInfo extends SugarRecord {
     // Название переменной
     String option;
 
@@ -46,10 +46,10 @@ public class ConfigInfo extends SugarRecord<ConfigInfo> {
             return Integer.parseInt(value);
         }
 
-        return value;
-    }
+        if (Boolean.class.getName().equals(type)){
+            return Boolean.parseBoolean(value);
+        }
 
-    public String getOption(){
-        return option;
+        return value;
     }
 }

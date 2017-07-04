@@ -2,20 +2,14 @@ package lion.rockwheel;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.ObjectInputValidation;
 
 import lion.rockwheel.bluetooth.BtDevice;
 import lion.rockwheel.bluetooth.BtService;
@@ -58,13 +52,14 @@ public class SettingsPanel extends BasePanel {
             dialog.show();
         }));
 
-        setViewText(R.id.btnDevice, CfgHelper.getLastBtDeviceAddress());
-        setViewText(R.id.etLowCellVoltage, CfgHelper.getCellLow());
-        setViewText(R.id.etHighCellVoltage, CfgHelper.getCellHigh());
-        setViewText(R.id.etBatterySeries, CfgHelper.getBatterySeries());
-        setViewText(R.id.etConnectionTimeOut, CfgHelper.getConnectionTimeOut());
-        setViewText(R.id.etSpeedCorr, CfgHelper.getSpeedCorr());
-        setViewText(R.id.etSpeedLimit, CfgHelper.getSpeedLimit());
+        setViewInfo(R.id.btnDevice, CfgHelper.getLastBtDeviceAddress());
+        setViewInfo(R.id.etLowCellVoltage, CfgHelper.getCellLow());
+        setViewInfo(R.id.etHighCellVoltage, CfgHelper.getCellHigh());
+        setViewInfo(R.id.etBatterySeries, CfgHelper.getBatterySeries());
+        setViewInfo(R.id.etConnectionTimeOut, CfgHelper.getConnectionTimeOut());
+        setViewInfo(R.id.etSpeedCorr, CfgHelper.getSpeedCorr());
+        setViewInfo(R.id.etSpeedLimit, CfgHelper.getSpeedLimit());
+        setViewInfo(R.id.cbSpeedAlert, CfgHelper.getSpeedAlert());
 
         Button btnReset = (Button)findViewById(R.id.btnReset);
         btnReset.setOnClickListener((view) -> {
@@ -90,13 +85,14 @@ public class SettingsPanel extends BasePanel {
 
     @Override
     public void onBackPressed() {
-        CfgHelper.setLastBtDeviceAddress(getViewText(R.id.btnDevice));
-        CfgHelper.setCellLow(Float.parseFloat(getViewText(R.id.etLowCellVoltage)));
-        CfgHelper.setCellHigh(Float.parseFloat(getViewText(R.id.etHighCellVoltage)));
-        CfgHelper.setBatterySeries(Integer.parseInt(getViewText(R.id.etBatterySeries)));
-        CfgHelper.setConnectionTimeOut(Integer.parseInt(getViewText(R.id.etConnectionTimeOut)));
-        CfgHelper.setSpeedCorr(Float.parseFloat(getViewText(R.id.etSpeedCorr)));
-        CfgHelper.setSpeedLimit(Integer.parseInt(getViewText(R.id.etSpeedLimit)));
+        CfgHelper.setLastBtDeviceAddress(getViewInfo(R.id.btnDevice));
+        CfgHelper.setCellLow(Float.parseFloat(getViewInfo(R.id.etLowCellVoltage)));
+        CfgHelper.setCellHigh(Float.parseFloat(getViewInfo(R.id.etHighCellVoltage)));
+        CfgHelper.setBatterySeries(Integer.parseInt(getViewInfo(R.id.etBatterySeries)));
+        CfgHelper.setConnectionTimeOut(Integer.parseInt(getViewInfo(R.id.etConnectionTimeOut)));
+        CfgHelper.setSpeedCorr(Float.parseFloat(getViewInfo(R.id.etSpeedCorr)));
+        CfgHelper.setSpeedLimit(Integer.parseInt(getViewInfo(R.id.etSpeedLimit)));
+        CfgHelper.setSpeedAlert(Boolean.parseBoolean(getViewInfo(R.id.cbSpeedAlert)));
 
         finish();
     }

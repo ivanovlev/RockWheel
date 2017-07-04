@@ -1,18 +1,19 @@
 package lion.rockwheel;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
@@ -23,7 +24,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import lion.rockwheel.model.BtDeviceInfo;
+import lion.rockwheel.model.DeviceInfo;
 import lion.rockwheel.bluetooth.BtService;
 import lion.rockwheel.helpers.CfgHelper;
 import lion.rockwheel.helpers.DbHelper;
@@ -33,6 +34,8 @@ public class DashPanel extends BasePanel {
     float cellLow = 0;
     float cellHigh = 0;
     int speedLimit = 0;
+    boolean alert = true;
+    int alertCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +71,21 @@ public class DashPanel extends BasePanel {
         cellLow = CfgHelper.getCellLow();
         cellHigh = CfgHelper.getCellHigh();
         speedLimit = CfgHelper.getSpeedLimit();
+        alert = CfgHelper.getSpeedAlert();
 
         DecimalFormat format = new DecimalFormat("#0.0");
-        setViewText(R.id.barVoltageHigh, format.format(batterySeries * cellHigh));
-        setViewText(R.id.barVoltageLow, format.format(batterySeries * cellLow));
-        setViewText(R.id.barSpeedHigh, String.valueOf(speedLimit));
+        setViewInfo(R.id.barVoltageHigh, format.format(batterySeries * cellHigh));
+        setViewInfo(R.id.barVoltageLow, format.format(batterySeries * cellLow));
+        setViewInfo(R.id.barSpeedHigh, String.valueOf(speedLimit));
 
         updateHeader("");
+
+        ImageView notify = (ImageView) findViewById(R.id.icoAlert);
+        if (CfgHelper.getSpeedAlert()){
+            notify.setImageResource(R.mipmap.ic_alert);
+        }else {
+            notify.setImageResource(R.mipmap.ic_silent);
+        }
 
         GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
         gvTrip.removeAllSeries();
@@ -106,7 +117,7 @@ public class DashPanel extends BasePanel {
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case MessageConstants.MESSAGE_READ:
-                        BtDeviceInfo info = (BtDeviceInfo)msg.obj;
+                        DeviceInfo info = (DeviceInfo)msg.obj;
 
                         tbInfo.setText(String.format("%1$s km\\h | %2$s km\\h | %3$s v | %4$s km",
                                                         info.speed,
@@ -114,6 +125,10 @@ public class DashPanel extends BasePanel {
                                                         info.voltage,
                                                         format.format(info.distance)));
                         updateChart();
+
+                        if(alert){
+                            playAlert(info.speed);
+                        }
 
                         float s = info.getSpeedPecent(speedLimit);
                         barSpeed.setProgress((int)s);
@@ -176,6 +191,30 @@ public class DashPanel extends BasePanel {
 
     private float convertToPt(float sp){
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, sp, getResources().getDisplayMetrics());
+    }
+
+    private void playAlert(float speed){
+        if (speed > speedLimit * 0.6){
+            if(alertCounter == 0){
+                int channel = AudioManager.STREAM_MUSIC;
+                int volume = ToneGenerator.MAX_VOLUME;
+                int template = ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD;
+                new ToneGenerator(channel, volume).startTone(template, 200);
+            }
+
+            alertCounter++;
+
+            if (speed > speedLimit * 0.8){
+                if (alertCounter > 1){
+                    alertCounter = 0;
+                }
+            }
+            if (alertCounter > 5){
+                alertCounter = 0;
+            }
+        }else {
+            alertCounter = 0;
+        }
     }
 
     @Override

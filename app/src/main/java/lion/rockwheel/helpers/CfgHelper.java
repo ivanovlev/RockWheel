@@ -16,6 +16,7 @@ public class CfgHelper {
     private static final String cellHigh = "cellHigh";
     private static final String speedCorr = "speedCorr";
     private static final String speedLimit = "speedLimit";
+    private static final String speedAlert = "speedAlert";
     private static final String connTimeOut = "connTimeOut";
 
     //region Getters
@@ -31,6 +32,8 @@ public class CfgHelper {
     public static Float getSpeedCorr(){ return getOption(speedCorr, 1.19f); }
 
     public static Integer getSpeedLimit(){ return getOption(speedLimit, 30); }
+
+    public static Boolean getSpeedAlert(){ return getOption(speedAlert, true); }
 
     public static Integer getConnectionTimeOut(){ return getOption(connTimeOut, 5); }
 
@@ -55,6 +58,8 @@ public class CfgHelper {
     public static void setSpeedCorr(Float corr){ saveOption(speedCorr, corr); }
 
     public static void setSpeedLimit(Integer limit){ saveOption(speedLimit, limit); }
+
+    public static void setSpeedAlert(Boolean alert){ saveOption(speedAlert, alert); }
 
     public static void setConnectionTimeOut(Integer timeOut){ saveOption(connTimeOut, timeOut); }
 

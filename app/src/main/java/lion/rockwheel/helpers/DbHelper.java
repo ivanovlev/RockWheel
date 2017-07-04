@@ -5,7 +5,7 @@ import com.orm.query.Condition;
 import com.orm.query.Select;
 import java.util.ArrayList;
 import java.util.List;
-import lion.rockwheel.model.BtDeviceInfo;
+import lion.rockwheel.model.DeviceInfo;
 
 /**
  * Помощник работы с БД
@@ -19,26 +19,26 @@ public class DbHelper {
     /**
      * Актуальные данные
      */
-    private static BtDeviceInfo lastInfo;
+    private static DeviceInfo lastInfo;
 
     /**
      * Кеш из бд на последние @see DbHelper#meters
      */
-    private static List<BtDeviceInfo> cache = init();
+    private static List<DeviceInfo> cache = init();
 
     /**
      * Инициализация кеша
      * @return отсортированный массив с данными по возрастанию даты
      */
-    private static List<BtDeviceInfo> init() {
+    private static List<DeviceInfo> init() {
         //Получаем актуальные данные по девайсу
-        lastInfo = Select.from(BtDeviceInfo.class)
+        lastInfo = Select.from(DeviceInfo.class)
                         .orderBy("date DESC")
                         .first();
 
         if (lastInfo != null) {
             //Готовим кеш
-            return Select.from(BtDeviceInfo.class)
+            return Select.from(DeviceInfo.class)
                     .where(Condition.prop("distance").gt(lastInfo.distance - meters))
                     .orderBy("date")
                     .list();
@@ -52,7 +52,7 @@ public class DbHelper {
      * @param newInfo информация о девайсе
      * @return информация о девайсе
      */
-    public static BtDeviceInfo save(BtDeviceInfo newInfo){
+    public static DeviceInfo save(DeviceInfo newInfo){
         if (lastInfo != null){
             //Получаем среднюю скорость и переводим её из км\ч в м\с
             float speedKph = (lastInfo.speed + newInfo.speed) / 2;
@@ -84,7 +84,7 @@ public class DbHelper {
     public static float getAverageSpeed(){
         float sp = 0;
         if (cache.size() > 0){
-            for (BtDeviceInfo info: cache) {
+            for (DeviceInfo info: cache) {
                 sp+= info.speed;
             }
 
@@ -110,7 +110,7 @@ public class DbHelper {
      */
     public static DataPoint[] getHistory(){
         DataPoint[] points = new DataPoint[cache.size()];
-        for (BtDeviceInfo info: cache) {
+        for (DeviceInfo info: cache) {
             points[cache.indexOf(info)] = new DataPoint(info.distance, info.speed);
         }
 
@@ -121,7 +121,7 @@ public class DbHelper {
      * Очищает историю в бд и кеше
      */
     public static void clearHistory(){
-        BtDeviceInfo.deleteAll(BtDeviceInfo.class);
+        DeviceInfo.deleteAll(DeviceInfo.class);
         cache.clear();
         lastInfo = null;
     }

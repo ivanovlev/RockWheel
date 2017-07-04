@@ -10,7 +10,7 @@ import java.util.UUID;
 import lion.rockwheel.MessageConstants;
 import lion.rockwheel.helpers.CfgHelper;
 import lion.rockwheel.helpers.DbHelper;
-import lion.rockwheel.model.BtDeviceInfo;
+import lion.rockwheel.model.DeviceInfo;
 
 /**
  * Работа с bluetooth устройством
@@ -99,7 +99,7 @@ public class BtConnection extends Thread {
                 double expire =  (timeOut - (System.nanoTime() - lastRespondTime)) / (1E9 * 60);
                 int min = (int)expire;
                 int sec = (int)((expire - min) * 60);
-                sendState(String.format("Trying to reconnect for %1$s:%2$02d", min, sec));
+                sendState(String.format("Disconnect: %1$s:%2$02d left", min, sec));
             }else {
                 listen = false;
             }
@@ -128,7 +128,7 @@ public class BtConnection extends Thread {
                             rawInfo = rawInfo.substring(end + 1);
 
                             // отправляем результат в GUI
-                            sendInfo(DbHelper.save(new BtDeviceInfo(result, speedCorr)));
+                            sendInfo(DbHelper.save(new DeviceInfo(result, speedCorr)));
                         }
                     }
 
@@ -142,6 +142,8 @@ public class BtConnection extends Thread {
 
         if (lastRespondTime == null){
             sendMessage("Подключение не удалось");
+        }else {
+            sendState("");
         }
     }
 
@@ -176,7 +178,7 @@ public class BtConnection extends Thread {
      * Передача информации о девайсе получателю через обработчик
      * @param info информация о девайсе
      */
-    private void sendInfo(BtDeviceInfo info){
+    private void sendInfo(DeviceInfo info){
         sendState("Connected");
         handler.obtainMessage(MessageConstants.MESSAGE_READ, info).sendToTarget();
     }

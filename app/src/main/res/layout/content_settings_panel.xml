@@ -17,8 +17,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-
     <GridLayout
         android:columnCount="2"
         android:layout_width="match_parent"
@@ -28,6 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
+            android:textColor="@color/colorGray"
             android:text="Bt device"/>
         <Button
             android:id="@+id/btnDevice"
@@ -41,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
+            android:textColor="@color/colorGray"
             android:text="Battery Series"/>
         <EditText
             android:id="@+id/etBatterySeries"
@@ -53,6 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
+            android:textColor="@color/colorGray"
             android:text="Cell high voltage"/>
         <EditText
             android:id="@+id/etHighCellVoltage"
@@ -65,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
+            android:textColor="@color/colorGray"
             android:text="Cell low voltage"/>
         <EditText
             android:id="@+id/etLowCellVoltage"
@@ -77,6 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
+            android:textColor="@color/colorGray"
             android:text="Connection timeout"/>
         <EditText
             android:id="@+id/etConnectionTimeOut"
@@ -89,6 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
+            android:textColor="@color/colorGray"
             android:text="Speed correction"/>
         <EditText
             android:id="@+id/etSpeedCorr"
@@ -101,18 +105,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
+            android:textColor="@color/colorGray"
             android:text="Speed limit"/>
-        <EditText
-            android:id="@+id/etSpeedLimit"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="fill"
-            android:inputType="numberDecimal"/>
+            android:layout_gravity="fill">
+            <EditText
+                android:id="@+id/etSpeedLimit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"/>
+
+            <CheckBox
+                android:id="@+id/cbSpeedAlert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:layout_gravity="center"
+                android:text="Notify "
+                android:textColor="@color/colorGray"/>
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
+            android:textColor="@color/colorGray"
             android:text="Trip statistics"/>
         <Button
             android:id="@+id/btnReset"
