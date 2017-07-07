@@ -10,6 +10,7 @@ import java.util.UUID;
 import lion.rockwheel.MessageConstants;
 import lion.rockwheel.helpers.CfgHelper;
 import lion.rockwheel.helpers.DbHelper;
+import lion.rockwheel.helpers.TimeHelper;
 import lion.rockwheel.model.DeviceInfo;
 
 /**
@@ -24,7 +25,7 @@ public class BtConnection extends Thread {
     BluetoothDevice device;
 
     // Таймаут реконнекта
-    Double timeOut;
+    double timeOut;
 
     // Флаг прослушки COM порта
     Boolean listen;
@@ -41,7 +42,7 @@ public class BtConnection extends Thread {
     public BtConnection(BluetoothDevice device, Integer timeOut, Handler handler) {
         this.handler = handler;
         this.device = device;
-        this.timeOut = timeOut * 60 * 1E9;
+        this.timeOut = TimeHelper.minutesToNano(timeOut);
 
         start();
     }
@@ -96,10 +97,8 @@ public class BtConnection extends Thread {
         while (listen == null || (listen && System.nanoTime() - lastRespondTime < timeOut)) {
 
             if (lastRespondTime != null){
-                double expire =  (timeOut - (System.nanoTime() - lastRespondTime)) / (1E9 * 60);
-                int min = (int)expire;
-                int sec = (int)((expire - min) * 60);
-                sendState(String.format("Disconnect: %1$s:%2$02d left", min, sec));
+                String expire = TimeHelper.nanoToText((float)timeOut - (System.nanoTime() - lastRespondTime));
+                sendState(String.format("Disconnect: %1$s left", expire));
             }else {
                 listen = false;
             }

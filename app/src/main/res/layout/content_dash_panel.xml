@@ -184,33 +184,118 @@
                 android:layout_width="match_parent"
                 android:layout_height="80pt"/>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_centerInParent="true"
-            android:layout_alignParentBottom="true" >
-
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Speed | MaxSpeed | Battery | Distance">
-            </TextView>
+                android:background="@drawable/levelbar">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:id="@+id/tbInfo"
-                android:text="- | - | - | -">
-            </TextView>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"
+                        android:text="Distance"/>
+
+                    <TextView
+                        android:id="@+id/tbDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"
+                        android:text="-"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"
+                        android:text="Ride time"/>
+
+                    <TextView
+                        android:id="@+id/tbRideTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"
+                        android:text="-"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"
+                        android:text="Average speed"/>
+
+                    <TextView
+                        android:id="@+id/tbAverageSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"
+                        android:text="-"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"
+                        android:text="Max speed"/>
+
+                    <TextView
+                        android:id="@+id/tbMaxSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"
+                        android:text="-"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
 
         </LinearLayout>
-
-
-
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

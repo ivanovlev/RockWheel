@@ -54,6 +54,7 @@ public class DbHelper {
      */
     public static DeviceInfo save(DeviceInfo newInfo){
         if (lastInfo != null){
+            if(lastInfo.speed != 0 && newInfo.speed != 0){
             //Получаем среднюю скорость и переводим её из км\ч в м\с
             float speedKph = (lastInfo.speed + newInfo.speed) / 2;
             float speedMps = speedKph / 3.6f;
@@ -62,9 +63,16 @@ public class DbHelper {
             float periodNanoSec = newInfo.date - lastInfo.date;
             double periodSec = periodNanoSec / 1E9;
 
-            //Сохраняем масималку и пройденную дистанцию
+            //Сохраняем масималку, пройденную дистанцию и время в пути
             newInfo.distance = lastInfo.distance + (float)(speedMps * periodSec / 1000);
             newInfo.maxSpeed = newInfo.speed > lastInfo.maxSpeed ? newInfo.speed : lastInfo.maxSpeed;
+            newInfo.elapsed = lastInfo.elapsed + periodNanoSec;
+
+            }else {
+                newInfo.distance = lastInfo.distance;
+                newInfo.maxSpeed = lastInfo.maxSpeed;
+                newInfo.elapsed = lastInfo.elapsed;
+            }
         }
 
         //сохраняем при наличии изменений и чистим кеш от устаревших данных

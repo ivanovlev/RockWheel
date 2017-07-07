@@ -24,6 +24,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import lion.rockwheel.helpers.TimeHelper;
 import lion.rockwheel.model.DeviceInfo;
 import lion.rockwheel.bluetooth.BtService;
 import lion.rockwheel.helpers.CfgHelper;
@@ -87,7 +88,7 @@ public class DashPanel extends BasePanel {
             notify.setImageResource(R.mipmap.ic_silent);
         }
 
-        GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
+        GraphView gvTrip = (GraphView)view(R.id.gvTrip);
         gvTrip.removeAllSeries();
         gvTrip.addSeries(new LineGraphSeries());
         Viewport viewport = gvTrip.getViewport();
@@ -100,57 +101,26 @@ public class DashPanel extends BasePanel {
     }
 
     private Handler getHandler() {
-        TextView tbInfo = (TextView) findViewById(R.id.tbInfo);
-
-        ProgressBar barSpeed= (ProgressBar) findViewById(R.id.barSpeed);
-        TextView tbSpeed = (TextView) findViewById(R.id.tbSpeed);
-        FrameLayout.LayoutParams tbSpeedPos = (FrameLayout.LayoutParams) findViewById(R.id.tbSpeedPos).getLayoutParams();
-
-        ProgressBar barVoltage = (ProgressBar) findViewById(R.id.barVoltage);
-        TextView tbVoltage = (TextView) findViewById(R.id.tbVoltage);
-        FrameLayout.LayoutParams tbVoltagePos = (FrameLayout.LayoutParams) findViewById(R.id.tbVoltagePos).getLayoutParams();
-
-        DecimalFormat format = new DecimalFormat("#0.00");
-        DecimalFormat intFormat = new DecimalFormat("##");
-
         return new Handler() {
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case MessageConstants.MESSAGE_READ:
                         DeviceInfo info = (DeviceInfo)msg.obj;
 
-                        tbInfo.setText(String.format("%1$s km\\h | %2$s km\\h | %3$s v | %4$s km",
-                                                        info.speed,
-                                                        info.maxSpeed,
-                                                        info.voltage,
-                                                        format.format(info.distance)));
+                        updateDynamicFields(info);
+
                         updateChart();
 
                         if(alert){
                             playAlert(info.speed);
                         }
 
-                        float s = info.getSpeedPecent(speedLimit);
-                        barSpeed.setProgress((int)s);
-                        tbSpeed.setText(intFormat.format(info.speed));
-                        tbSpeedPos.bottomMargin = (int)convertToPt(s);
-
-                        float v = (info.getCellVoltage(batterySeries) - cellLow)/(cellHigh - cellLow) * 100;
-                        barVoltage.setProgress((int)v);
-                        tbVoltage.setText(intFormat.format(info.voltage));
-                        tbVoltagePos.bottomMargin = (int)convertToPt(v);
                         break;
 
                     case MessageConstants.MESSAGE_ERROR:
-                        tbInfo.setText("- | - | - | -");
-
-                        tbSpeed.setText("-");
-                        barSpeed.setProgress(0);
-                        tbSpeedPos.bottomMargin = 0;
-
-                        tbVoltage.setText("-");
-                        barVoltage.setProgress(0);
-                        tbVoltagePos.bottomMargin = 0;
+                        updateDynamicFields(null);
+                        //tbSpeed.setText("-");
+                        //tbVoltage.setText("-");
 
                         showMessage(msg.obj.toString());
                         break;
@@ -167,6 +137,54 @@ public class DashPanel extends BasePanel {
         };
     }
 
+    private void updateDynamicFields(DeviceInfo info){
+        TextView tbDistance = (TextView)view(R.id.tbDistance);
+        TextView tbRideTime = (TextView)view(R.id.tbRideTime);
+        TextView tbAverageSpeed = (TextView)view(R.id.tbAverageSpeed);
+        TextView tbMaxSpeed = (TextView)view(R.id.tbMaxSpeed);
+
+        ProgressBar barSpeed= (ProgressBar) view(R.id.barSpeed);
+        TextView tbSpeed = (TextView) view(R.id.tbSpeed);
+        FrameLayout.LayoutParams tbSpeedPos = (FrameLayout.LayoutParams) view(R.id.tbSpeedPos).getLayoutParams();
+
+        ProgressBar barVoltage = (ProgressBar) view(R.id.barVoltage);
+        TextView tbVoltage = (TextView) view(R.id.tbVoltage);
+        FrameLayout.LayoutParams tbVoltagePos = (FrameLayout.LayoutParams) view(R.id.tbVoltagePos).getLayoutParams();
+
+        DecimalFormat format = new DecimalFormat("#0.00");
+        DecimalFormat intFormat = new DecimalFormat("##");
+
+        if (info != null){
+            tbDistance.setText(format.format(info.distance));
+            tbMaxSpeed.setText(String.valueOf(info.maxSpeed));
+            tbRideTime.setText(TimeHelper.nanoToText(info.elapsed));
+            tbAverageSpeed.setText(format.format(info.distance / TimeHelper.toHour(info.elapsed)));
+
+            float s = info.getSpeedPecent(speedLimit);
+            barSpeed.setProgress((int)s);
+            tbSpeed.setText(intFormat.format(info.speed));
+            tbSpeedPos.bottomMargin = (int)convertToPt(s);
+
+            float v = (info.getCellVoltage(batterySeries) - cellLow)/(cellHigh - cellLow) * 100;
+            barVoltage.setProgress((int)v);
+            tbVoltage.setText(intFormat.format(info.voltage));
+            tbVoltagePos.bottomMargin = (int)convertToPt(v);
+        }else {
+            tbDistance.setText("-");
+            tbMaxSpeed.setText("-");
+            tbAverageSpeed.setText("-");
+            tbRideTime.setText("-");
+
+            barSpeed.setProgress(0);
+            tbSpeed.setText("-");
+            tbSpeedPos.bottomMargin = 0;
+
+            barVoltage.setProgress(0);
+            tbVoltage.setText("-");
+            tbVoltagePos.bottomMargin = 0;
+        }
+    }
+
     private void updateHeader(String txt){
         StringBuilder header = new StringBuilder(String.format("RockWheel %1$ss", batterySeries));
         if (txt != ""){
@@ -177,7 +195,7 @@ public class DashPanel extends BasePanel {
     }
 
     private void updateChart(){
-        GraphView gvTrip = (GraphView)findViewById(R.id.gvTrip);
+        GraphView gvTrip = (GraphView)view(R.id.gvTrip);
         try {
             for (Series series : gvTrip.getSeries()) {
                 ((LineGraphSeries)series).resetData(DbHelper.getHistory());
@@ -194,26 +212,21 @@ public class DashPanel extends BasePanel {
     }
 
     private void playAlert(float speed){
-        if (speed > speedLimit * 0.6){
-            if(alertCounter == 0){
-                int channel = AudioManager.STREAM_MUSIC;
-                int volume = ToneGenerator.MAX_VOLUME;
-                int template = ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD;
-                new ToneGenerator(channel, volume).startTone(template, 200);
-            }
+        alertCounter++;
 
-            alertCounter++;
-
-            if (speed > speedLimit * 0.8){
-                if (alertCounter > 1){
-                    alertCounter = 0;
-                }
-            }
-            if (alertCounter > 5){
-                alertCounter = 0;
-            }
-        }else {
+        if (speed > speedLimit * 0.6 && alertCounter > 5) {
             alertCounter = 0;
+        }
+
+        if (speed > speedLimit * 0.8 && alertCounter > 1) {
+            alertCounter = 0;
+        }
+
+        if (alertCounter == 0) {
+            int channel = AudioManager.STREAM_MUSIC;
+            int volume = ToneGenerator.MAX_VOLUME;
+            int template = ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD;
+            new ToneGenerator(channel, volume).startTone(template, 200);
         }
     }
 

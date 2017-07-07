@@ -27,6 +27,11 @@ public class DeviceInfo extends SugarRecord {
     public float distance = 0;
 
     /**
+     * Время поездки
+     */
+    public float elapsed = 0;
+
+    /**
      * Дата фиксации данных
      */
     public float date = System.nanoTime();
