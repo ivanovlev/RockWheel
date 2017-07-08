@@ -18,21 +18,24 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:layout_alignParentTop="true"
+            android:layout_marginLeft="1pt"
+            android:layout_marginRight="1pt"
             android:orientation="vertical">
 
-                <LinearLayout
+            <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_gravity="center"
-                    android:layout_marginTop="2pt">
+                    android:layout_marginTop="2pt"
+                    android:layout_weight="1">
 
                     <FrameLayout
                         android:layout_width="55pt"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -44,7 +47,7 @@
 
                         <LinearLayout
                             android:layout_width="15pt"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:orientation="vertical"
                             android:layout_gravity="right">
 
@@ -62,8 +65,9 @@
                                 android:max="100"
                                 android:progress="0"
                                 android:layout_width="10pt"
-                                android:layout_height="100pt"
-                                android:layout_gravity="center"/>
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"/>
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -105,7 +109,7 @@
 
                     <FrameLayout
                         android:layout_width="55pt"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -117,7 +121,7 @@
 
                         <LinearLayout
                             android:layout_width="15pt"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:orientation="vertical"
                             android:layout_gravity="left">
 
@@ -135,8 +139,9 @@
                                 android:max="100"
                                 android:progress="0"
                                 android:layout_width="10pt"
-                                android:layout_height="100pt"
-                                android:layout_gravity="center"/>
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"/>
 
                             <TextView
                                 android:id="@+id/barVoltageLow"
@@ -191,7 +196,7 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -199,6 +204,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
                         android:textStyle="bold"
                         android:textSize="8pt"
                         android:textColor="@color/colorGray"
@@ -217,7 +224,7 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -225,6 +232,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
                         android:textStyle="bold"
                         android:textSize="8pt"
                         android:textColor="@color/colorGray"
@@ -243,7 +252,7 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -251,6 +260,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
                         android:textStyle="bold"
                         android:textSize="8pt"
                         android:textColor="@color/colorGray"
@@ -269,7 +280,7 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -277,6 +288,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
                         android:textStyle="bold"
                         android:textSize="8pt"
                         android:textColor="@color/colorGray"
@@ -295,7 +308,11 @@
 
             </LinearLayout>
 
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6">
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

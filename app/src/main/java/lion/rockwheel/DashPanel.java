@@ -163,12 +163,12 @@ public class DashPanel extends BasePanel {
             float s = info.getSpeedPecent(speedLimit);
             barSpeed.setProgress((int)s);
             tbSpeed.setText(intFormat.format(info.speed));
-            tbSpeedPos.bottomMargin = (int)convertToPt(s);
+            tbSpeedPos.bottomMargin = (int)(barSpeed.getHeight() * s / 100);
 
             float v = (info.getCellVoltage(batterySeries) - cellLow)/(cellHigh - cellLow) * 100;
             barVoltage.setProgress((int)v);
             tbVoltage.setText(intFormat.format(info.voltage));
-            tbVoltagePos.bottomMargin = (int)convertToPt(v);
+            tbVoltagePos.bottomMargin = (int)(barVoltage.getHeight() * v / 100);
         }else {
             tbDistance.setText("-");
             tbMaxSpeed.setText("-");
