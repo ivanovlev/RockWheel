@@ -311,7 +311,36 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.6">
+                android:layout_weight="0.4">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="1pt">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total mileage: "
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"/>
+
+                    <TextView
+                        android:id="@+id/tvTotalOdo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textSize="8pt"
+                        android:textColor="@color/colorGray"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" km"
+                        android:textColor="@color/colorGray"/>
+                </LinearLayout>
+
+
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

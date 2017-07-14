@@ -89,27 +89,8 @@ public class DbHelper {
         return lastInfo;
     }
 
-    public static float getAverageSpeed(){
-        float sp = 0;
-        if (cache.size() > 0){
-            for (DeviceInfo info: cache) {
-                sp+= info.speed;
-            }
-
-            return sp / cache.size();
-        }
-        return 0;
-    }
-
-    public static double getAverageTime(){
-        float start = 0;
-        float end = 0;
-        if (cache.size() > 0){
-            start = cache.get(0).date;
-            end = lastInfo.date;
-        }
-
-        return (end-start) / 1E9;
+    public static DeviceInfo getLastInfo(){
+        return lastInfo != null ? lastInfo : new DeviceInfo();
     }
 
     /**

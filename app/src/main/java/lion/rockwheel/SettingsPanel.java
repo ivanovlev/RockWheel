@@ -60,6 +60,7 @@ public class SettingsPanel extends BasePanel {
         setViewInfo(R.id.etSpeedCorr, CfgHelper.getSpeedCorr());
         setViewInfo(R.id.etSpeedLimit, CfgHelper.getSpeedLimit());
         setViewInfo(R.id.cbSpeedAlert, CfgHelper.getSpeedAlert());
+        setViewInfo(R.id.etTotalOdo, CfgHelper.getTotalOdo());
 
         Button btnReset = (Button)findViewById(R.id.btnReset);
         btnReset.setOnClickListener((view) -> {
@@ -71,6 +72,7 @@ public class SettingsPanel extends BasePanel {
                     "Continue",
                     (dialog, id) -> {
                         dialog.cancel();
+                        CfgHelper.setTotalOdo(CfgHelper.getTotalOdo());
                         DbHelper.clearHistory();
                         onBackPressed();
                     });
@@ -93,6 +95,7 @@ public class SettingsPanel extends BasePanel {
         CfgHelper.setSpeedCorr(Float.parseFloat(getViewInfo(R.id.etSpeedCorr)));
         CfgHelper.setSpeedLimit(Integer.parseInt(getViewInfo(R.id.etSpeedLimit)));
         CfgHelper.setSpeedAlert(Boolean.parseBoolean(getViewInfo(R.id.cbSpeedAlert)));
+        CfgHelper.setTotalOdo(Float.parseFloat(getViewInfo(R.id.etTotalOdo)));
 
         finish();
     }

@@ -18,6 +18,7 @@ public class CfgHelper {
     private static final String speedLimit = "speedLimit";
     private static final String speedAlert = "speedAlert";
     private static final String connTimeOut = "connTimeOut";
+    private static final String totalOdo = "totalOdo";
 
     //region Getters
 
@@ -36,6 +37,8 @@ public class CfgHelper {
     public static Boolean getSpeedAlert(){ return getOption(speedAlert, true); }
 
     public static Integer getConnectionTimeOut(){ return getOption(connTimeOut, 5); }
+
+    public static Float getTotalOdo(){ return getOption(totalOdo, 0f); }
 
     //endregion
 
@@ -62,6 +65,8 @@ public class CfgHelper {
     public static void setSpeedAlert(Boolean alert){ saveOption(speedAlert, alert); }
 
     public static void setConnectionTimeOut(Integer timeOut){ saveOption(connTimeOut, timeOut); }
+
+    public static void setTotalOdo(Float odometer){ saveOption(totalOdo, odometer); }
 
     //endregion
 

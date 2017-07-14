@@ -135,6 +135,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
             android:textColor="@color/colorGray"
+            android:text="Total odometer"/>
+        <EditText
+            android:id="@+id/etTotalOdo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:textColor="@color/colorGray"
             android:text="Trip statistics"/>
         <Button
             android:id="@+id/btnReset"

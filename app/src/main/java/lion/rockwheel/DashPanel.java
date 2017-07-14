@@ -21,6 +21,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.Series;
 
 import java.text.DecimalFormat;
+import java.text.Format;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class DashPanel extends BasePanel {
     int speedLimit = 0;
     boolean alert = true;
     int alertCounter = 0;
+    float totalOdo = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ public class DashPanel extends BasePanel {
         cellHigh = CfgHelper.getCellHigh();
         speedLimit = CfgHelper.getSpeedLimit();
         alert = CfgHelper.getSpeedAlert();
+        totalOdo = CfgHelper.getTotalOdo();
 
         DecimalFormat format = new DecimalFormat("#0.0");
         setViewInfo(R.id.barVoltageHigh, format.format(batterySeries * cellHigh));
@@ -97,6 +100,7 @@ public class DashPanel extends BasePanel {
         viewport.setMaxY(45);
         viewport.setMinY(0);
 
+        updateDynamicFields(DbHelper.getLastInfo());
         updateChart();
     }
 
@@ -119,8 +123,6 @@ public class DashPanel extends BasePanel {
 
                     case MessageConstants.MESSAGE_ERROR:
                         updateDynamicFields(null);
-                        //tbSpeed.setText("-");
-                        //tbVoltage.setText("-");
 
                         showMessage(msg.obj.toString());
                         break;
@@ -151,30 +153,27 @@ public class DashPanel extends BasePanel {
         TextView tbVoltage = (TextView) view(R.id.tbVoltage);
         FrameLayout.LayoutParams tbVoltagePos = (FrameLayout.LayoutParams) view(R.id.tbVoltagePos).getLayoutParams();
 
-        DecimalFormat format = new DecimalFormat("#0.00");
-        DecimalFormat intFormat = new DecimalFormat("##");
+        DecimalFormat roundTxt = new DecimalFormat("#0.00");
+        DecimalFormat intTxt = new DecimalFormat("##");
 
         if (info != null){
-            tbDistance.setText(format.format(info.distance));
+            tbDistance.setText(roundTxt.format(info.distance));
             tbMaxSpeed.setText(String.valueOf(info.maxSpeed));
             tbRideTime.setText(TimeHelper.nanoToText(info.elapsed));
-            tbAverageSpeed.setText(format.format(info.distance / TimeHelper.toHour(info.elapsed)));
+            tbAverageSpeed.setText(roundTxt.format(info.distance / TimeHelper.toHour(info.elapsed)));
 
             float s = info.getSpeedPecent(speedLimit);
             barSpeed.setProgress((int)s);
-            tbSpeed.setText(intFormat.format(info.speed));
+            tbSpeed.setText(intTxt.format(info.speed));
             tbSpeedPos.bottomMargin = (int)(barSpeed.getHeight() * s / 100);
 
             float v = (info.getCellVoltage(batterySeries) - cellLow)/(cellHigh - cellLow) * 100;
             barVoltage.setProgress((int)v);
-            tbVoltage.setText(intFormat.format(info.voltage));
+            tbVoltage.setText(intTxt.format(info.voltage));
             tbVoltagePos.bottomMargin = (int)(barVoltage.getHeight() * v / 100);
-        }else {
-            tbDistance.setText("-");
-            tbMaxSpeed.setText("-");
-            tbAverageSpeed.setText("-");
-            tbRideTime.setText("-");
 
+            setViewInfo(R.id.tvTotalOdo, roundTxt.format(totalOdo + info.distance));
+        }else {
             barSpeed.setProgress(0);
             tbSpeed.setText("-");
             tbSpeedPos.bottomMargin = 0;
@@ -205,10 +204,6 @@ public class DashPanel extends BasePanel {
         }catch (Exception e){
             showMessage(e.getMessage());
         }
-    }
-
-    private float convertToPt(float sp){
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, sp, getResources().getDisplayMetrics());
     }
 
     private void playAlert(float speed){
