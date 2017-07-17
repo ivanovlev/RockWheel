@@ -72,7 +72,6 @@ public class SettingsPanel extends BasePanel {
                     "Continue",
                     (dialog, id) -> {
                         dialog.cancel();
-                        CfgHelper.setTotalOdo(CfgHelper.getTotalOdo());
                         DbHelper.clearHistory();
                         onBackPressed();
                     });

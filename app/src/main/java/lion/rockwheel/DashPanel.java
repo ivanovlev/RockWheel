@@ -38,7 +38,6 @@ public class DashPanel extends BasePanel {
     int speedLimit = 0;
     boolean alert = true;
     int alertCounter = 0;
-    float totalOdo = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,6 @@ public class DashPanel extends BasePanel {
         cellHigh = CfgHelper.getCellHigh();
         speedLimit = CfgHelper.getSpeedLimit();
         alert = CfgHelper.getSpeedAlert();
-        totalOdo = CfgHelper.getTotalOdo();
 
         DecimalFormat format = new DecimalFormat("#0.0");
         setViewInfo(R.id.barVoltageHigh, format.format(batterySeries * cellHigh));
@@ -100,7 +98,7 @@ public class DashPanel extends BasePanel {
         viewport.setMaxY(45);
         viewport.setMinY(0);
 
-        updateDynamicFields(DbHelper.getLastInfo());
+        updateStats(DbHelper.getLastInfo());
         updateChart();
     }
 
@@ -111,7 +109,9 @@ public class DashPanel extends BasePanel {
                     case MessageConstants.MESSAGE_READ:
                         DeviceInfo info = (DeviceInfo)msg.obj;
 
-                        updateDynamicFields(info);
+                        updateStats(info);
+
+                        updateBars(info);
 
                         updateChart();
 
@@ -122,7 +122,7 @@ public class DashPanel extends BasePanel {
                         break;
 
                     case MessageConstants.MESSAGE_ERROR:
-                        updateDynamicFields(null);
+                        updateBars(null);
 
                         showMessage(msg.obj.toString());
                         break;
@@ -139,12 +139,7 @@ public class DashPanel extends BasePanel {
         };
     }
 
-    private void updateDynamicFields(DeviceInfo info){
-        TextView tbDistance = (TextView)view(R.id.tbDistance);
-        TextView tbRideTime = (TextView)view(R.id.tbRideTime);
-        TextView tbAverageSpeed = (TextView)view(R.id.tbAverageSpeed);
-        TextView tbMaxSpeed = (TextView)view(R.id.tbMaxSpeed);
-
+    private void updateBars(DeviceInfo info){
         ProgressBar barSpeed= (ProgressBar) view(R.id.barSpeed);
         TextView tbSpeed = (TextView) view(R.id.tbSpeed);
         FrameLayout.LayoutParams tbSpeedPos = (FrameLayout.LayoutParams) view(R.id.tbSpeedPos).getLayoutParams();
@@ -153,15 +148,9 @@ public class DashPanel extends BasePanel {
         TextView tbVoltage = (TextView) view(R.id.tbVoltage);
         FrameLayout.LayoutParams tbVoltagePos = (FrameLayout.LayoutParams) view(R.id.tbVoltagePos).getLayoutParams();
 
-        DecimalFormat roundTxt = new DecimalFormat("#0.00");
         DecimalFormat intTxt = new DecimalFormat("##");
 
         if (info != null){
-            tbDistance.setText(roundTxt.format(info.distance));
-            tbMaxSpeed.setText(String.valueOf(info.maxSpeed));
-            tbRideTime.setText(TimeHelper.nanoToText(info.elapsed));
-            tbAverageSpeed.setText(roundTxt.format(info.distance / TimeHelper.toHour(info.elapsed)));
-
             float s = info.getSpeedPecent(speedLimit);
             barSpeed.setProgress((int)s);
             tbSpeed.setText(intTxt.format(info.speed));
@@ -171,8 +160,6 @@ public class DashPanel extends BasePanel {
             barVoltage.setProgress((int)v);
             tbVoltage.setText(intTxt.format(info.voltage));
             tbVoltagePos.bottomMargin = (int)(barVoltage.getHeight() * v / 100);
-
-            setViewInfo(R.id.tvTotalOdo, roundTxt.format(totalOdo + info.distance));
         }else {
             barSpeed.setProgress(0);
             tbSpeed.setText("-");
@@ -182,6 +169,29 @@ public class DashPanel extends BasePanel {
             tbVoltage.setText("-");
             tbVoltagePos.bottomMargin = 0;
         }
+    }
+
+    private void updateStats(DeviceInfo info){
+        TextView tbDistance = (TextView)view(R.id.tbDistance);
+        TextView tbRideTime = (TextView)view(R.id.tbRideTime);
+        TextView tbAverageSpeed = (TextView)view(R.id.tbAverageSpeed);
+        TextView tbMaxSpeed = (TextView)view(R.id.tbMaxSpeed);
+
+        DecimalFormat roundTxt = new DecimalFormat("#0.00");
+
+        if (info != null){
+            tbDistance.setText(roundTxt.format(info.distance));
+            tbMaxSpeed.setText(String.valueOf(info.maxSpeed));
+            tbRideTime.setText(TimeHelper.nanoToText(info.elapsed));
+            tbAverageSpeed.setText(roundTxt.format(info.distance / TimeHelper.toHour(info.elapsed)));
+        }else {
+            tbDistance.setText("-");
+            tbMaxSpeed.setText("-");
+            tbRideTime.setText("-");
+            tbAverageSpeed.setText("-");
+        }
+
+        setViewInfo(R.id.tvTotalOdo, roundTxt.format(CfgHelper.getTotalOdo()));
     }
 
     private void updateHeader(String txt){

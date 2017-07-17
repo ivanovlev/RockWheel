@@ -3,6 +3,13 @@ package lion.rockwheel.helpers;
 import com.orm.query.Condition;
 import com.orm.query.Select;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import lion.rockwheel.model.ConfigInfo;
 
 /**
@@ -19,6 +26,19 @@ public class CfgHelper {
     private static final String speedAlert = "speedAlert";
     private static final String connTimeOut = "connTimeOut";
     private static final String totalOdo = "totalOdo";
+
+    private static Map<String, ConfigInfo> settingsMap = init();
+
+    private static Map<String, ConfigInfo> init(){
+        List<ConfigInfo> settings = Select.from(ConfigInfo.class).list();
+
+        Map<String,ConfigInfo> map = new HashMap();
+        for (ConfigInfo i : settings) {
+            map.put(i.getOption(),i);
+        }
+
+        return map;
+    }
 
     //region Getters
 
@@ -71,26 +91,20 @@ public class CfgHelper {
     //endregion
 
     private static void saveOption(String option, Object value){
-        ConfigInfo info = Select.from(ConfigInfo.class)
-                .where(Condition.prop("option").eq(option))
-                .first();
-
-        if (info != null){
+        if(settingsMap.containsKey(option)){
+            ConfigInfo info = settingsMap.get(option);
             info.setValue(value);
+            info.save();
         }else {
-            info = new ConfigInfo(option, value);
+            ConfigInfo info = new ConfigInfo(option, value);
+            settingsMap.put(option, info);
+            info.save();
         }
-
-        info.save();
     }
 
     private static <T> T getOption(String option, T defaultValue){
-        ConfigInfo info = Select.from(ConfigInfo.class)
-                .where(Condition.prop("option").eq(option))
-                .first();
-
-        if (info != null){
-            return (T)info.getValue();
+        if(settingsMap.containsKey(option)){
+            return (T)settingsMap.get(option).getValue();
         }
 
         return defaultValue;

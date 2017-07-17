@@ -37,6 +37,10 @@ public class ConfigInfo extends SugarRecord {
         this.type = value.getClass().getName();
     }
 
+    public String getOption(){
+        return option;
+    }
+
     public Object getValue() {
         if (Float.class.getName().equals(type)){
             return Float.parseFloat(value);

@@ -54,20 +54,26 @@ public class DbHelper {
      */
     public static DeviceInfo save(DeviceInfo newInfo){
         if (lastInfo != null){
-            if(lastInfo.speed != 0 && newInfo.speed != 0){
-            //Получаем среднюю скорость и переводим её из км\ч в м\с
-            float speedKph = (lastInfo.speed + newInfo.speed) / 2;
-            float speedMps = speedKph / 3.6f;
-
-            //Получаем время движения с вычесленной средней скоростью
+            //Получаем время движения
             float periodNanoSec = newInfo.date - lastInfo.date;
             double periodSec = periodNanoSec / 1E9;
 
-            //Сохраняем масималку, пройденную дистанцию и время в пути
-            newInfo.distance = lastInfo.distance + (float)(speedMps * periodSec / 1000);
-            newInfo.maxSpeed = newInfo.speed > lastInfo.maxSpeed ? newInfo.speed : lastInfo.maxSpeed;
-            newInfo.elapsed = lastInfo.elapsed + periodNanoSec;
+            //Проверяем актуальность данных
+            if(periodSec < 1){
+                //Получаем среднюю скорость и переводим её из км\ч в м\с
+                float speedKph = (lastInfo.speed + newInfo.speed) / 2;
+                float speedMps = speedKph / 3.6f;
 
+                //Рассчитываем пробег
+                float move = (float)(speedMps * periodSec / 1000);
+
+                //Сохраняем масималку, пройденную дистанцию и время в пути
+                newInfo.distance = lastInfo.distance + move;
+                newInfo.maxSpeed = newInfo.speed > lastInfo.maxSpeed ? newInfo.speed : lastInfo.maxSpeed;
+                newInfo.elapsed = lastInfo.elapsed + periodNanoSec;
+
+                //Апаем одометр
+                CfgHelper.setTotalOdo(CfgHelper.getTotalOdo() + move);
             }else {
                 newInfo.distance = lastInfo.distance;
                 newInfo.maxSpeed = lastInfo.maxSpeed;
@@ -90,7 +96,7 @@ public class DbHelper {
     }
 
     public static DeviceInfo getLastInfo(){
-        return lastInfo != null ? lastInfo : new DeviceInfo();
+        return lastInfo;
     }
 
     /**
